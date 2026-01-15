@@ -1,0 +1,36 @@
+﻿create proc sp_InsertGradeIntoSchoolGradeTable
+	@SchoolID INT,
+	@GradeID INT
+as
+begin
+	insert into dbo.SchoolGrade(SchoolID, GradeID)
+	values(@SchoolID, @GradeID)
+end;
+
+exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 1;
+exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 2;
+exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 3;
+exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 4;
+exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 5;
+exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 6;
+exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 7;
+
+
+
+
+
+
+create or alter proc sp_GetSchoolDetailsByID
+	@SchoolID int
+as
+begin
+	select school.SchoolName, school.Address, site.SiteName, grade.GradeName from dbo.SchoolGrade schoolGrade
+	join dbo.School school
+	on schoolGrade.SchoolID = school.SchoolID
+	join Grade grade
+	on Grade.GradeID = schoolGrade.GradeID
+	join dbo.Site site
+	on site.SiteID = school.SiteID;
+end;
+
+exec sp_GetSchoolDetailsByID @SchoolID = 2;

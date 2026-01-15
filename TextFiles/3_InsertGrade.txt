@@ -1,0 +1,7 @@
+﻿create proc sp_GetAllGradeNames
+as
+begin
+	select GradeName from dbo.Grade;
+end;
+
+exec sp_GetAllGradeNames;

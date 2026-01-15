@@ -1,0 +1,23 @@
+﻿create proc sp_GetAllSiteNames
+as
+begin
+	select SiteName from dbo.Site
+end;
+
+exec sp_GetAllSiteNames;
+
+
+
+create proc sp_GetSiteDetailsByID
+ @SiteID int
+as
+begin
+	select site.SiteName, entity.TypeName, site.Address  from dbo.Site site 
+	join EntityType entity
+	on site.SiteTypeID = entity.EntityTypeID
+	where site.SiteID = @SiteID
+end;
+
+exec sp_GetSiteDetailsByID @SiteID = 1;
+
+

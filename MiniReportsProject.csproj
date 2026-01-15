@@ -144,6 +144,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include=".gitignore" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -163,8 +164,14 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="SQLTables.txt" />
-    <Content Include="SystemDesign.txt" />
+    <Content Include="TextFiles\1_EntityTypeInsert.txt" />
+    <Content Include="TextFiles\2_InsertGrantee.txt" />
+    <Content Include="TextFiles\3_InsertGrade.txt" />
+    <Content Include="TextFiles\4_Site.txt" />
+    <Content Include="TextFiles\5_School.txt" />
+    <Content Include="TextFiles\6_SchoolGrade.txt" />
+    <Content Include="TextFiles\SQLTables.txt" />
+    <Content Include="TextFiles\SystemDesign.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -1,0 +1,19 @@
+﻿create proc sp_GetAllSchoolNames
+as
+begin
+	select SchoolName from dbo.School
+end;
+
+exec sp_GetAllSchoolNames;
+
+
+create proc sp_GetSchoolDetailsById
+	@SchoolID int
+as
+begin
+	select school.SchoolName, site.SiteName, school.Address from dbo.School school
+	join dbo.Site site
+	on school.SiteID = site.SiteID
+end;
+
+exec sp_GetSchoolDetailsById @SchoolID = 2;

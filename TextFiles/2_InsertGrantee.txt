@@ -1,0 +1,31 @@
+﻿CREATE OR ALTER PROCEDURE sp_Grantee_GetAll2
+AS
+BEGIN
+    SELECT
+        g.GranteeID,
+        g.GranteeName,
+        g.Address,
+        et.TypeName AS GrantType
+    FROM Grantee g
+    JOIN EntityType et ON g.GrantTypeID = et.EntityTypeID
+    WHERE et.Level = 'Grantee';
+END;
+
+CREATE OR ALTER PROCEDURE sp_Grantee_Insert
+    @GranteeName VARCHAR(200),
+    @GrantTypeID INT,
+    @Address VARCHAR(300)
+AS
+BEGIN
+    INSERT INTO Grantee (GranteeName, GrantTypeID, Address)
+    VALUES (@GranteeName, @GrantTypeID, @Address);
+END;
+
+EXEC sp_Grantee_GetAll;
+
+EXEC sp_Grantee_Insert
+    @GranteeName = 'Grantee 123',
+    @GrantTypeID = 1,
+    @Address = 'Test Address';
+
+SELECT * FROM Grantee;

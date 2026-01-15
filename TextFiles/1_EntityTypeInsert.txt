@@ -1,0 +1,26 @@
+﻿CREATE OR ALTER PROCEDURE sp_EntityType_Insert
+	@Level Varchar(20),
+	@TypeName Varchar(100)
+AS
+BEGIN
+	INSERT INTO dbo.EntityType (Level, TypeName)
+	VALUES(@Level, @TypeName)
+END;
+
+EXEC sp_EntityType_Insert
+    @Level = 'Grantee',
+    @TypeName = 'Public School';
+
+SELECT * FROM EntityType;
+
+
+create proc sp_GetEntityTypesByLevel
+	@Level varchar(20)
+as
+begin
+	select TypeName from EntityType
+	where Level = @Level
+end;
+
+EXEC sp_GetEntityTypesByLevel
+    @Level = 'Site';
