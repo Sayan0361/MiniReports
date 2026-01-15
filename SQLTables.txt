@@ -1,0 +1,64 @@
+﻿create table EntityType(
+	EntityTypeID INT identity(1,1) primary key,
+	Level Varchar(20) NOT NULL,
+	TypeName Varchar(100) NOT NULL
+);
+
+CREATE TABLE Grade (
+    GradeID INT PRIMARY KEY,
+    GradeName VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE Grantee (
+    GranteeID INT IDENTITY(1,1) PRIMARY KEY,
+    GranteeName VARCHAR(200) NOT NULL,
+    GrantTypeID INT NOT NULL,
+    Address VARCHAR(300),
+
+    CONSTRAINT FK_Grantee_EntityType
+        FOREIGN KEY (GrantTypeID)
+        REFERENCES EntityType(EntityTypeID)
+);
+
+CREATE TABLE Site (
+    SiteID INT IDENTITY(1,1) PRIMARY KEY,
+    SiteName VARCHAR(200) NOT NULL,
+    SiteTypeID INT NOT NULL,
+    Address VARCHAR(300),
+    GranteeID INT NOT NULL,
+
+    CONSTRAINT FK_Site_EntityType
+        FOREIGN KEY (SiteTypeID)
+        REFERENCES EntityType(EntityTypeID),
+
+    CONSTRAINT FK_Site_Grantee
+        FOREIGN KEY (GranteeID)
+        REFERENCES Grantee(GranteeID)
+);
+
+CREATE TABLE School (
+    SchoolID INT IDENTITY(1,1) PRIMARY KEY,
+    SchoolName VARCHAR(200) NOT NULL,
+    SiteID INT NOT NULL,
+    Address VARCHAR(300),
+
+    CONSTRAINT FK_School_Site
+        FOREIGN KEY (SiteID)
+        REFERENCES Site(SiteID)
+);
+
+CREATE TABLE SchoolGrade (
+    SchoolID INT NOT NULL,
+    GradeID INT NOT NULL,
+
+    CONSTRAINT PK_SchoolGrade
+        PRIMARY KEY (SchoolID, GradeID),
+
+    CONSTRAINT FK_SchoolGrade_School
+        FOREIGN KEY (SchoolID)
+        REFERENCES School(SchoolID),
+
+    CONSTRAINT FK_SchoolGrade_Grade
+        FOREIGN KEY (GradeID)
+        REFERENCES Grade(GradeID)
+);
