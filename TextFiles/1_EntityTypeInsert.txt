@@ -24,3 +24,18 @@ end;
 
 EXEC sp_GetEntityTypesByLevel
     @Level = 'Site';
+
+
+
+
+create proc sp_GetTypeIDByTypeName
+	@Level varchar(20),
+	@TypeName varchar(100)
+as
+begin
+	select EntityTypeID from EntityType
+	where Level = @Level 
+	and TypeName = @TypeName;
+end;
+
+exec sp_GetTypeIDByTypeName @Level = 'Grantee', @TypeName = 'College';

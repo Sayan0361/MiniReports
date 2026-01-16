@@ -9,7 +9,7 @@ namespace MiniReportsProject.Models
     {
         public int GranteeID { get; set; }
         public string GranteeName { get; set; }
-        public string GranteeType { get; set; }
+        public int GranteeTypeID { get; set; }
         public string Address { get; set; } 
     }
 }
