@@ -20,4 +20,15 @@ end;
 
 exec sp_GetSiteDetailsByID @SiteID = 1;
 
+ALTER proc [dbo].[sp_InsertSite]
+	@SiteName varchar(200),
+	@SiteTypeID int,
+	@Address varchar(300),
+	@GrantID int
+as
+begin
+	insert into Site (SiteName, SiteTypeID, Address, GranteeID)
+	values(@SiteName, @SiteTypeID, @Address, @GrantID)
+end;
+
 

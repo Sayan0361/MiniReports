@@ -1,0 +1,26 @@
+﻿@model IEnumerable<MiniReportsProject.Models.GranteeModel>
+
+<h2>Grantees</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Grantee</th>
+            <th>Logon</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var g in Model)
+        {
+            <tr>
+                <td>@g.GranteeName</td>
+                <td>
+                    <a class="btn btn-success btn-sm"
+                       href="@Url.Action("Index", "Site", new { granteeId = g.GranteeID })">
+                        Logon
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

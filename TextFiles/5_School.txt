@@ -17,3 +17,13 @@ begin
 end;
 
 exec sp_GetSchoolDetailsById @SchoolID = 2;
+
+ALTER proc [dbo].[sp_InsertSchool]
+	@SchoolName varchar(200),
+	@SiteID int,
+	@Address varchar(300)
+as
+begin
+	insert into School (SchoolName, SiteID, Address)
+	values(@SchoolName, @SiteID, @Address)
+end;
