@@ -45,5 +45,23 @@ namespace MiniReportsProject.Controllers
             TempData["Success"] = $"{linkedCount} school(s) linked successfully.";
             return RedirectToAction("Index", "Site", new { id = siteId });
         }
+
+        public ActionResult Add()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Add(SchoolModel school, int id)
+        {
+            school.SiteID = id;
+            if (ModelState.IsValid)
+            {
+                _schoolDAL.AddSchool(school);
+                TempData["Success"] = "School added successfully.";
+                return RedirectToAction("Index" ,"Site", new {id = id});
+            }
+            return View(school);
+        }
     }
 }
