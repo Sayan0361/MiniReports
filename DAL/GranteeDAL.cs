@@ -68,7 +68,7 @@ namespace MiniReportsProject.DAL
             }
             catch (Exception err)
             {
-                throw new Exception("Insert Failed in catch block: " + err.Message);
+                throw new Exception("Fetching Grantee Types Failed in catch block: " + err.Message);
             }
         }
 

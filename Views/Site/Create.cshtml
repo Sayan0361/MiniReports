@@ -1,0 +1,71 @@
+﻿@model MiniReportsProject.ViewModel.SiteCreateViewModel
+
+<div class="w-100 min-h-screen bg-light">
+
+    <div class="card border-0 shadow-sm form-card">
+
+        <div class="card-header bg-white border-bottom px-4 py-3">
+            <h5 class="mb-0 fw-semibold text-secondary">
+                Create Site
+            </h5>
+        </div>
+
+        <div class="card-body px-4 py-4">
+
+            <p class="text-muted mb-4">
+                Provide the required details to create a new site.
+            </p>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger mb-4" })
+
+                @Html.HiddenFor(m => m.GrantID)
+
+                <!-- Site Name -->
+                <div class="mb-4">
+                    @Html.LabelFor(m => m.SiteName, "Name", new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.SiteName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SiteName, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Site Type Dropdown -->
+                <div class="mb-4">
+                    @Html.LabelFor(m => m.SelectedTypeName, "Site Type", new { @class = "form-label" })
+                    @Html.DropDownListFor(
+                        m => m.SelectedTypeName,
+                        new SelectList(Model.EntityTypes, "TypeName", "TypeName"),
+                        "Select site type",
+                        new { @class = "form-select" }
+                    )
+                    @Html.ValidationMessageFor(m => m.SelectedTypeName, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Address -->
+                <div class="mb-4">
+                    @Html.LabelFor(m => m.Address, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-end gap-2 pt-3">
+                    <a href="@Url.Action("Create", "Grantee", new { GrantID = Model.GrantID })"
+                       class="btn btn-outline-secondary px-4">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        Create
+                    </button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

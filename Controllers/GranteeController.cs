@@ -16,14 +16,18 @@ namespace MiniReportsProject.Controllers
         {
             var SiteList = _granteeDAL.GetAllSitesByGranteeID(ID);
             string GranteeName = _granteeDAL.GetGranteeNameByID(ID);
+            int GranteeID = ID;
 
             var siteViewModel = new SiteViewModel();
             siteViewModel.siteList = SiteList;
             siteViewModel.GranteeName = GranteeName;
+            siteViewModel.GranteeID = GranteeID;
             // pass the string as the model (not as a view name)
             //return View((object)GranteeName);
             return View(siteViewModel);
         }
+
+
 
     }
 }

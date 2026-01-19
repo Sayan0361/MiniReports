@@ -41,6 +41,16 @@
                 </div>
             </div>
 
+            <div class="row mb-4">
+                <div class="col">
+                    @*Send the grantee ID to the action*@
+                    <a href="@Url.Action("Create", "Site", new {grantId = Model.GranteeID})"  
+                       class="btn btn-outline-primary">
+                        + Add Site
+                    </a>
+                </div>
+            </div>
+
             <!-- No Sites Message -->
             @if (Model.siteList.Count() == 0)
             {

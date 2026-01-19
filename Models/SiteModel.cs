@@ -9,8 +9,8 @@ namespace MiniReportsProject.Models
     {
         public int SiteID { get; set; }
         public  string SiteName { get; set; }
-        public string SiteType { get; set; }
+        public int SiteTypeID { get; set; }
         public string Address { get; set; }
-        public int GranteeID { get; set; }
+        public int GrantID { get; set; }
     }
 }
