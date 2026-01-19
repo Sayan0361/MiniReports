@@ -46,5 +46,33 @@ namespace MiniReportsProject.DAL
                 throw new Exception("Fetching Grantee Types Failed in catch block: " + err.Message);
             }
         }
+
+        public void AddSchool(SchoolModel school)
+        {
+            try
+            {
+                using (var db = DapperContext.GetConnection())
+                {
+                    int rowsEffected = db.Execute(
+                        "sp_InsertSchool",
+                        new
+                        {
+                            SchoolName = school.SchoolName,
+                            Address = school.Address,
+                            SiteID = school.SiteID
+                        },
+                        commandType: CommandType.StoredProcedure
+                    );
+                    if (rowsEffected == 0)
+                    {
+                        throw new Exception("Insert operation failed.");
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Insert Failed in catch block: " + err.Message);
+            }
+        }
     }
 }

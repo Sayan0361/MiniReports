@@ -17,7 +17,7 @@
         </div>
 
         <div class="d-flex align-items-center">
-            <a href="@Url.Action("Create", "School", new { siteId = siteId, granteeId = granteeId })" class="btn btn-primary me-2" aria-label="Add a school">
+            <a href="@Url.Action("Add", "School", new { id = siteId})" class="btn btn-primary me-2" aria-label="Add a school">
                 + Add a school
             </a>
             <a href="@Url.Action("Index", "School", new { id = siteId })" class="btn btn-outline-secondary me-3" aria-label="Link an existing school">
