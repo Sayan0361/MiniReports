@@ -1,6 +1,9 @@
 ﻿using MiniReportsProject.DAL;
 using MiniReportsProject.Models;
+using MiniReportsProject.ViewModel;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Policy;
 using System.Web.Mvc;
 
 namespace MiniReportsProject.Controllers
@@ -46,22 +49,79 @@ namespace MiniReportsProject.Controllers
             return RedirectToAction("Index", "Site", new { id = siteId });
         }
 
-        public ActionResult Add()
+        public ActionResult Add(int id)
         {
-            return View();
+            var model = new SchoolGradeViewModel
+            {
+                School = new SchoolModel
+                {
+                    SiteID = id
+                },
+                SelectedGrades = new List<int>()
+            };
+
+            return View(model);
         }
 
+
+        //[HttpPost]
+        //public ActionResult Add(SchoolModel school, int id)
+        //{
+        //    school.SiteID = id;
+        //    if (ModelState.IsValid)
+        //    {
+        //        _schoolDAL.AddSchool(school);
+        //        TempData["Success"] = "School added successfully.";
+        //        return RedirectToAction("Index" ,"Site", new {id = id});
+        //    }
+        //    return View(school);
+        //}
+
         [HttpPost]
-        public ActionResult Add(SchoolModel school, int id)
+        [ValidateAntiForgeryToken]
+        public ActionResult Add(SchoolGradeViewModel model)
         {
-            school.SiteID = id;
-            if (ModelState.IsValid)
+            // 🔒 Safety checks (VERY IMPORTANT)
+            if (model == null)
             {
-                _schoolDAL.AddSchool(school);
-                TempData["Success"] = "School added successfully.";
-                return RedirectToAction("Index" ,"Site", new {id = id});
+                return HttpNotFound();
             }
-            return View(school);
+
+            if (model.School == null)
+            {
+                ModelState.AddModelError("", "School details are missing.");
+            }
+
+            if (model.SelectedGrades == null || !model.SelectedGrades.Any())
+            {
+                ModelState.AddModelError("", "Please select at least one grade.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            int schoolId = 0;
+
+            // ✅ Single SP call per grade
+            foreach (int gradeID in model.SelectedGrades)
+            {
+                schoolId = _schoolDAL.AddSchool(
+                    model.School,
+                    gradeID,
+                    schoolId   // 0 first time, actual ID next times
+                );
+            }
+
+            TempData["Success"] = "School added successfully.";
+
+            return RedirectToAction(
+                "Index",
+                "Site",
+                new { id = model.School.SiteID }
+            );
         }
+
     }
 }

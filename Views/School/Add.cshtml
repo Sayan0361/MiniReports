@@ -1,4 +1,4 @@
-﻿@model MiniReportsProject.Models.SchoolModel
+﻿@model MiniReportsProject.ViewModel.SchoolGradeViewModel
 
 @{
     ViewBag.Title = "Add";
@@ -6,59 +6,83 @@
 
 <h2>Add</h2>
 
-
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>SchoolModel</h4>
+        <h4>School</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.SchoolID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SchoolID, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SchoolID, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
 
         <div class="form-group">
-            @Html.LabelFor(model => model.SchoolName, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.School.SchoolName, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.SchoolName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SchoolName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.SiteID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SiteID, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SiteID, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                @Html.EditorFor(m => m.School.SchoolName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.School.SchoolName)
             </div>
         </div>
 
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+            @Html.LabelFor(m => m.School.Address, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.School.Address, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.School.Address)
             </div>
+        </div>
+
+        @Html.HiddenFor(m => m.School.SiteID)
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Grades</label>
+            <div class="col-md-10">
+
+                <div class="btn-group d-flex flex-wrap" role="group">
+                    @for (int grade = 1; grade <= 12; grade++)
+                    {
+                        <input type="checkbox"
+                               class="btn-check grade-checkbox"
+                               name="SelectedGrades"
+                               value="@grade"
+                               id="grade_@grade" />
+
+                        <label class="btn btn-outline-primary me-1 mb-1"
+                               for="grade_@grade">
+                            @grade
+                        </label>
+                    }
+                </div>
+
+                <button type="button"
+                        id="btnSelectAllGrades"
+                        class="btn btn-sm btn-outline-secondary mb-2">
+                    Select All
+                </button>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-start gap-2 pt-3">
+            <a href="@Url.Action("Index", "Site", new { id = Model.School.SiteID })"
+               class="btn btn-outline-secondary px-4">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary px-4">
+                Create
+            </button>
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@section Scripts{
+    <script>
+        $(document).ready(() => {
+            $("#btnSelectAllGrades").click(function() {
+                var allChecked = $(".grade-checkbox:checked").length === $(".grade-checkbox").length
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+                $(".grade-checkbox").prop("checked", !allChecked)
+
+                $(this).text(allChecked ? "Select All" : "Deselect All")
+            })
+        })
+    </script>
 }

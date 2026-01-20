@@ -1,9 +1,12 @@
 ﻿using Dapper;
 using MiniReportsProject.Models;
+using MiniReportsProject.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
+using System.Security.Policy;
 using System.Web;
 
 namespace MiniReportsProject.DAL
@@ -47,26 +50,29 @@ namespace MiniReportsProject.DAL
             }
         }
 
-        public void AddSchool(SchoolModel school)
+        public int AddSchool(SchoolModel school, int gradeID, int currSchoolID)
         {
             try
             {
                 using (var db = DapperContext.GetConnection())
                 {
-                    int rowsEffected = db.Execute(
-                        "sp_InsertSchool",
+                    return db.QuerySingle<int>(
+                        "sp_InsertSchoolAndGrade",
                         new
                         {
+                            SchoolID = currSchoolID,
+                            GradeID = gradeID,
                             SchoolName = school.SchoolName,
+                            SiteID = school.SiteID,
                             Address = school.Address,
-                            SiteID = school.SiteID
                         },
                         commandType: CommandType.StoredProcedure
                     );
-                    if (rowsEffected == 0)
-                    {
-                        throw new Exception("Insert operation failed.");
-                    }
+                    //if (schoolID <= 0)
+                    //{
+                    //    throw new Exception("Insert operation failed.");
+                    //}
+                    //return schoolID;
                 }
             }
             catch (Exception err)
