@@ -141,6 +141,7 @@
     <Compile Include="Models\SiteModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\LinkSchoolSiteViewModel.cs" />
+    <Compile Include="ViewModel\SchoolDetailsViewModel.cs" />
     <Compile Include="ViewModel\SchoolGradeViewModel.cs" />
     <Compile Include="ViewModel\SiteCreateViewModel.cs" />
     <Compile Include="ViewModel\SiteSchoolsViewModel.cs" />
