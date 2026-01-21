@@ -58,3 +58,34 @@ END
 GO
 
 exec dbo.sp_GetSiteByID @SiteID = 1;
+
+
+create or alter proc sp_DeleteSiteByID
+	@SiteID int
+as
+begin
+	set nocount on
+	begin try
+		begin transaction
+			
+			delete sg from dbo.SchoolGrade sg
+			join dbo.School school
+			on sg.SchoolID = school.SchoolID
+			where school.SiteID = @SiteID;
+
+			delete from dbo.School
+			where SiteID = @SiteID;
+
+			delete from dbo.Site
+			where SiteID = @SiteID;
+
+		commit transaction;
+	end try
+	begin catch
+		if @@TRANCOUNT>0
+		rollback transaction;
+	end catch;
+
+end;
+
+exec sp_DeleteSiteByID @SiteID = 6;

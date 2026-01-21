@@ -82,5 +82,27 @@ namespace MiniReportsProject.DAL
                 throw new Exception("Failed to fetch site by ID: " + err.Message);
             }
         }
+
+        public int DeleteSite(int id)
+        {
+            try
+            {
+                using (var db = DapperContext.GetConnection())
+                {
+                    return db.Execute(
+                        "sp_DeleteSiteByID",
+                        new
+                        {
+                            SiteID = id
+                        },
+                        commandType: CommandType.StoredProcedure
+                    );
+                }
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Delete Failed in catch block: " + err.Message);
+            }
+        }
     }
 }

@@ -87,5 +87,29 @@ namespace MiniReportsProject.Controllers
 
             return RedirectToAction("Index", "Grantee", new { id = model.GrantID });
         }
+
+        public ActionResult Delete(int id)
+        {
+            var site = _siteDAL.GetSiteByID(id);
+            if (site == null)
+            {
+                return HttpNotFound();
+            }
+            return View(site);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult DeleteConfirm(int id)
+        {
+            var site = _siteDAL.GetSiteByID(id);
+            if (site == null)
+            {
+                return HttpNotFound();
+            }
+            _siteDAL.DeleteSite(id);
+            return RedirectToAction("Index", "Grantee", new { id = site.GrantID });
+        }
     }
 }
