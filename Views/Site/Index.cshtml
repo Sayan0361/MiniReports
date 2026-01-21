@@ -25,7 +25,7 @@
     }
 
     .school-name {
-        font-weight: 600;
+        font-weight: 400;
         color: #212529;
         margin: 0;
     }
@@ -52,7 +52,10 @@
     <!-- Header / Breadcrumb -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h3 class="mb-0 fw-bold text-dark">Schools</h3>
+            <h1 class="mb-0 fw-bold text-dark">
+                Site Dashboard
+            </h1>
+            @*<h3 class="mb-0 fw-bold text-dark">Schools</h3>*@
             <small class="text-muted">Manage schools for this site @if (Model?.GranteeName != null) { <text>· @Model.GranteeName</text> }</small>
         </div>
 
@@ -82,7 +85,11 @@
             </div>
         </div>
     </div>
-
+    <div>
+        <h2>
+            List of schools under this site
+        </h2>
+    </div>
     <!-- Schools list -->
     <div class="card shadow-sm border">
         <div class="card-body p-0">
@@ -98,7 +105,7 @@
                 {
                     <div class="school-item">
                         <div class="school-info">
-                            <h4 class="school-name">@school.SchoolName</h4>
+                            <p class="school-name">@school.SchoolName</p>
                         </div>
 
                         <div class="school-actions">
