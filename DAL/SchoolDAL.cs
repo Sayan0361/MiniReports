@@ -75,17 +75,17 @@ namespace MiniReportsProject.DAL
             }
         }
         
-        public SchoolModel GetDetailsByID(int schoolID)
+        public List<SchoolDetailsViewModel> GetDetailsByID(int schoolID)
         {
             try
             {
                 using (var db = DapperContext.GetConnection())
                 {
-                    return db.QuerySingleOrDefault<SchoolModel>(
+                    return db.Query<SchoolDetailsViewModel>(
                         "sp_GetSchoolDetailsByID",
                         new { SchoolID = schoolID },
                         commandType: CommandType.StoredProcedure
-                    );
+                    ).ToList();
                 }
             }
             catch (Exception err)

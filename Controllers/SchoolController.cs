@@ -18,14 +18,6 @@ namespace MiniReportsProject.Controllers
         // single Index action with optional site id to avoid ambiguous matches
         public ActionResult Index(int id)
         {
-            // if caller provided a site id, expose it to the view (used for linking)
-            //if (id.HasValue)
-            //{
-            //    ViewBag.SiteId = id.Value;
-            //}
-
-            // currently GetAllSchoolNames returns the same list in both cases;
-            // change DAL if you need different behaviour when id is present (e.g. only unlinked schools)
             List<SchoolModel> schools = _schoolDAL.GetAllSchoolNames();
             List<SiteModel> sites = _granteeDAL.GetAllSitesByGranteeID(id);
 
@@ -73,19 +65,6 @@ namespace MiniReportsProject.Controllers
             return View(model);
         }
 
-
-        //[HttpPost]
-        //public ActionResult Add(SchoolModel school, int id)
-        //{
-        //    school.SiteID = id;
-        //    if (ModelState.IsValid)
-        //    {
-        //        _schoolDAL.AddSchool(school);
-        //        TempData["Success"] = "School added successfully.";
-        //        return RedirectToAction("Index" ,"Site", new {id = id});
-        //    }
-        //    return View(school);
-        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -137,12 +116,24 @@ namespace MiniReportsProject.Controllers
 
         public ActionResult Details(int id)
         {
-            var schoolDetails = _schoolDAL.GetDetailsByID(id);
-            //if (schoolDetails == null)
-            //{
+            var schoolDetailsList = _schoolDAL.GetDetailsByID(id);
 
-            //}
-            return View(schoolDetails);
+            List<string> gradeNames = new List<string>();
+
+            foreach (var school in schoolDetailsList)
+            {
+                gradeNames.Add(school.GradeName);
+            }
+
+            // Assuming you want to show details for a single school, and aggregate grades
+            var firstSchool = schoolDetailsList.FirstOrDefault();
+            if (firstSchool != null)
+            {
+                firstSchool.GradeNameList = gradeNames;
+                return View(firstSchool);
+            }
+
+            return HttpNotFound();
         }
     }
 }
