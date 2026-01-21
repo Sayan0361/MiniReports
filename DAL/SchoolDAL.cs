@@ -93,5 +93,20 @@ namespace MiniReportsProject.DAL
                 throw new Exception("Fetching School Details Failed in catch block: " + err.Message);
             }
         }
+
+        public int DeleteSchoolByID(int schoolID)
+        {
+            using (var db = DapperContext.GetConnection())
+            {
+                return db.Execute(
+                    "sp_DeleteSchoolByID",
+                    new
+                    {
+                        SchoolID = schoolID
+                    },
+                    commandType: CommandType.StoredProcedure
+                    );
+            }
+        }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using MiniReportsProject.DAL;
 using MiniReportsProject.Models;
 using MiniReportsProject.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Policy;
 using System.Web.Mvc;
@@ -12,6 +14,7 @@ namespace MiniReportsProject.Controllers
     {
         SchoolDAL _schoolDAL = new SchoolDAL();
         GranteeDAL _granteeDAL = new GranteeDAL();
+        SiteDAL _siteDAL = new SiteDAL();
 
 
         // GET: School
@@ -91,16 +94,6 @@ namespace MiniReportsProject.Controllers
                 return View(model);
             }
 
-            // ✅ Single SP call per grade
-            //foreach (int gradeID in model.SelectedGrades)
-            //{
-            //    schoolId = _schoolDAL.AddSchool(
-            //        model.School,
-            //        gradeID,
-            //        schoolId   // 0 first time, actual ID next times
-            //    );
-            //}
-
             string gradeList = string.Join(",", model.SelectedGrades);
 
             _schoolDAL.AddSchool(model.School, gradeList, LinkSiteToSchool);
@@ -134,6 +127,60 @@ namespace MiniReportsProject.Controllers
             }
 
             return HttpNotFound();
+        }
+
+        // GET: Display delete confirmation
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                var schoolDetailsList = _schoolDAL.GetDetailsByID(id);
+                var school = schoolDetailsList.FirstOrDefault();
+
+                if (school == null)
+                {
+                    TempData["Warning"] = "School not found.";
+                    return RedirectToAction("Index", "Grantee");
+                }
+
+                return View(school);
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Unexpected error occurred.";
+                return RedirectToAction("Index", "Grantee");
+            }
+        }
+
+        // POST: Confirm and delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirm(int id, int siteId)
+        {
+            try
+            {
+                int rows = _schoolDAL.DeleteSchoolByID(id);
+
+                if (rows == 0)
+                {
+                    TempData["Warning"] = "School not found or already deleted.";
+                }
+                else
+                {
+                    TempData["Success"] = "School deleted successfully.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Unexpected error occurred.";
+            }
+
+            // Redirect back to the site where the school was deleted from
+            return RedirectToAction("Index", "Site", new { id = siteId });
         }
     }
 }

@@ -81,3 +81,22 @@ BEGIN
     WHERE SchoolID = @SchoolID
       AND SiteID IS NULL;
 END
+
+
+create or alter proc sp_DeleteSchoolByID
+	@SchoolID int
+as
+begin
+	set nocount on;
+	begin try
+		begin transaction
+			delete from dbo.SchoolGrade where SchoolID = @SchoolID;
+			delete from dbo.School where SchoolID = @SchoolID;
+		commit transaction;
+	end try
+	begin catch
+		if @@TRANCOUNT > 0
+			rollback transaction;
+		throw;
+	end catch;
+end;
