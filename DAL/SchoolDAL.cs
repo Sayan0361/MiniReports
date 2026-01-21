@@ -50,34 +50,47 @@ namespace MiniReportsProject.DAL
             }
         }
 
-        public int AddSchool(SchoolModel school, int gradeID, int currSchoolID)
+        public void AddSchool(SchoolModel school, string gradeList)
         {
             try
             {
                 using (var db = DapperContext.GetConnection())
                 {
-                    return db.QuerySingle<int>(
+                    db.Execute(
                         "sp_InsertSchoolAndGrade",
                         new
                         {
-                            SchoolID = currSchoolID,
-                            GradeID = gradeID,
+                            GradeList = gradeList,
                             SchoolName = school.SchoolName,
                             SiteID = school.SiteID,
-                            Address = school.Address,
+                            Address = school.Address
                         },
                         commandType: CommandType.StoredProcedure
                     );
-                    //if (schoolID <= 0)
-                    //{
-                    //    throw new Exception("Insert operation failed.");
-                    //}
-                    //return schoolID;
                 }
             }
             catch (Exception err)
             {
                 throw new Exception("Insert Failed in catch block: " + err.Message);
+            }
+        }
+        
+        public SchoolModel GetDetailsByID(int schoolID)
+        {
+            try
+            {
+                using (var db = DapperContext.GetConnection())
+                {
+                    return db.QuerySingleOrDefault<SchoolModel>(
+                        "sp_GetSchoolDetailsByID",
+                        new { SchoolID = schoolID },
+                        commandType: CommandType.StoredProcedure
+                    );
+                }
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Fetching School Details Failed in catch block: " + err.Message);
             }
         }
     }

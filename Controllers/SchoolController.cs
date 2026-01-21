@@ -112,17 +112,19 @@ namespace MiniReportsProject.Controllers
                 return View(model);
             }
 
-            int schoolId = 0;
-
             // ✅ Single SP call per grade
-            foreach (int gradeID in model.SelectedGrades)
-            {
-                schoolId = _schoolDAL.AddSchool(
-                    model.School,
-                    gradeID,
-                    schoolId   // 0 first time, actual ID next times
-                );
-            }
+            //foreach (int gradeID in model.SelectedGrades)
+            //{
+            //    schoolId = _schoolDAL.AddSchool(
+            //        model.School,
+            //        gradeID,
+            //        schoolId   // 0 first time, actual ID next times
+            //    );
+            //}
+
+            string gradeList = string.Join(",", model.SelectedGrades);
+
+            _schoolDAL.AddSchool(model.School, gradeList);
 
             TempData["Success"] = "School added successfully.";
 
@@ -133,5 +135,14 @@ namespace MiniReportsProject.Controllers
             );
         }
 
+        public ActionResult Details(int id)
+        {
+            var schoolDetails = _schoolDAL.GetDetailsByID(id);
+            //if (schoolDetails == null)
+            //{
+
+            //}
+            return View(schoolDetails);
+        }
     }
 }
