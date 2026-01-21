@@ -68,9 +68,9 @@ namespace MiniReportsProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Add(SchoolGradeViewModel model)
+        public ActionResult Add(SchoolGradeViewModel model, bool LinkSiteToSchool)
         {
-            // 🔒 Safety checks (VERY IMPORTANT)
+            // Safety checks (VERY IMPORTANT)
             if (model == null)
             {
                 return HttpNotFound();
@@ -103,7 +103,7 @@ namespace MiniReportsProject.Controllers
 
             string gradeList = string.Join(",", model.SelectedGrades);
 
-            _schoolDAL.AddSchool(model.School, gradeList);
+            _schoolDAL.AddSchool(model.School, gradeList, LinkSiteToSchool);
 
             TempData["Success"] = "School added successfully.";
 

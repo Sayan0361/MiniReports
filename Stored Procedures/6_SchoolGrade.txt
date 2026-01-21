@@ -17,20 +17,56 @@ exec sp_InsertGradeIntoSchoolGradeTable @SchoolID = 2, @GradeID = 7;
 
 
 
-
-
-
-create or alter proc sp_GetSchoolDetailsByID
+ALTER   proc [dbo].[sp_GetSchoolDetailsById]
 	@SchoolID int
 as
 begin
-	select school.SchoolName, school.Address, site.SiteName, grade.GradeName from dbo.SchoolGrade schoolGrade
-	join dbo.School school
-	on schoolGrade.SchoolID = school.SchoolID
+	select site.SiteID, school.SchoolName, school.Address, site.SiteName, grade.GradeName 
+	from School school
+	join Site site
+	on school.SiteID = site.SiteID
+	and SchoolID = @SchoolID
+	join SchoolGrade schoolgrade
+	on schoolgrade.SchoolID = @SchoolID
 	join Grade grade
-	on Grade.GradeID = schoolGrade.GradeID
-	join dbo.Site site
-	on site.SiteID = school.SiteID;
+	on grade.GradeID = schoolgrade.GradeID;
 end;
 
 exec sp_GetSchoolDetailsByID @SchoolID = 2;
+
+ALTER   proc [dbo].[sp_InsertSchoolAndGrade]
+	@GradeList varchar(MAX), -- "1,PK,12,3,5"
+	@SchoolName varchar(200),
+	@SiteID int,
+	@Address varchar(300)
+as
+begin
+	begin try
+		begin transaction	
+			-- declare SchoolID
+			declare @SchoolID int;
+
+			-- insert into school
+			insert into dbo.School(SchoolName, Address, SiteID)
+			values(@SchoolName, @Address, @SiteID);
+
+			-- using scope, set the value of SchoolID generated to SchoolID
+			set @SchoolID = CAST(SCOPE_IDENTITY() as int);
+			
+			-- create a temporary table Grades
+			create table #Grades(GradeID int);
+
+			-- insert the values from gradeList into the temp table Grades
+			insert into #Grades(GradeID)
+			select value from string_split(@GradeList,',');
+
+			-- insert the schoolID and gradeID inside the schoolGrade
+			insert into dbo.SchoolGrade(SchoolID,GradeID)
+			select @SchoolID, GradeID from #Grades;
+
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
+end;

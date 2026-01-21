@@ -50,7 +50,7 @@ namespace MiniReportsProject.DAL
             }
         }
 
-        public void AddSchool(SchoolModel school, string gradeList)
+        public void AddSchool(SchoolModel school, string gradeList, bool LinkSiteToSchool)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace MiniReportsProject.DAL
                         {
                             GradeList = gradeList,
                             SchoolName = school.SchoolName,
-                            SiteID = school.SiteID,
+                            SiteID = LinkSiteToSchool ? school.SiteID : 0,
                             Address = school.Address
                         },
                         commandType: CommandType.StoredProcedure
