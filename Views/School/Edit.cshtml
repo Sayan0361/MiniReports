@@ -1,0 +1,129 @@
+﻿@model MiniReportsProject.ViewModel.SchoolGradeViewModel
+
+@{
+    ViewBag.Title = "Edit School";
+}
+
+<div class="w-100 min-h-screen bg-light" style="padding-top: 2rem; padding-bottom: 2rem;">
+
+    <div class="card border-0 shadow-sm" style="max-width: 820px; margin: 0 auto;">
+
+        <div class="card-header bg-white border-bottom px-4 py-3">
+            <h5 class="mb-0 fw-semibold text-secondary">
+                Edit School (ID: @Model.School.SchoolID)
+            </h5>
+        </div>
+
+        <div class="card-body px-4 py-4">
+
+            <p class="text-muted mb-4">
+                Update the school details and select grades below.
+            </p>
+
+            @using (Html.BeginForm("Edit", "School", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger mb-4" })
+
+                <!-- ✅ EXPLICIT hidden fields with proper binding -->
+                <input type="hidden" name="School.SchoolID" value="@Model.School.SchoolID" />
+                <input type="hidden" name="School.SiteID" value="@Model.School.SiteID" />
+
+                <!-- School Name -->
+                <div class="mb-4">
+                    @Html.LabelFor(m => m.School.SchoolName, "School Name", new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.School.SchoolName, new { @class = "form-control", placeholder = "Enter school name" })
+                    @Html.ValidationMessageFor(m => m.School.SchoolName, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Address -->
+                <div class="mb-4">
+                    @Html.LabelFor(m => m.School.Address, "Address", new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.School.Address, new { @class = "form-control", placeholder = "Enter school address" })
+                    @Html.ValidationMessageFor(m => m.School.Address, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Grades -->
+                <div class="mb-4">
+                    <label class="form-label">Grades</label>
+                    <div class="btn-group d-flex flex-wrap" role="group">
+                        @for (int grade = 1; grade <= 12; grade++)
+                        {
+                            var isSelected = Model.SelectedGrades.Contains(grade);
+                            <input type="checkbox"
+                                   class="btn-check grade-checkbox"
+                                   name="SelectedGrades"
+                                   value="@grade"
+                                   id="grade_@grade"
+                                   @(isSelected ? "checked" : "") />
+
+                            <label class="btn btn-outline-primary me-1 mb-1"
+                                   for="grade_@grade">
+                                @grade
+                            </label>
+                        }
+                    </div>
+                    <div class="mt-2">
+                        <button type="button"
+                                id="btnSelectAllGrades"
+                                class="btn btn-sm btn-outline-secondary">
+                            Select All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Toggle: Link School to Site -->
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="toggleLinkSite"
+                               @(Model.School.SiteID > 0 ? "checked" : "") />
+
+                        <label class="form-check-label" for="toggleLinkSite">
+                            Link this school to the current site
+                        </label>
+                    </div>
+
+                    <!-- Hidden field to store true / false -->
+                    <input type="hidden"
+                           name="LinkSiteToSchool"
+                           id="LinkSiteToSchool"
+                           value="@(Model.School.SiteID > 0 ? "true" : "false")" />
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-end gap-2 pt-3">
+                    <a href="@Url.Action("Index", "Site", new { id = Model.School.SiteID })"
+                       class="btn btn-outline-secondary px-4">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        Update School
+                    </button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#toggleLinkSite").on("change", function () {
+                $("#LinkSiteToSchool").val(this.checked ? "true" : "false");
+            });
+
+            $("#btnSelectAllGrades").click(function () {
+                var allChecked = $(".grade-checkbox:checked").length === $(".grade-checkbox").length
+
+                $(".grade-checkbox").prop("checked", !allChecked)
+
+                $(this).text(allChecked ? "Select All" : "Deselect All")
+            })
+        })
+    </script>
+}

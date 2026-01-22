@@ -16,9 +16,9 @@
         border-bottom: 1px solid #dee2e6;
     }
 
-    .school-item:last-child {
-        border-bottom: none;
-    }
+        .school-item:last-child {
+            border-bottom: none;
+        }
 
     .school-info {
         flex: 1;
@@ -56,7 +56,8 @@
                 Site Dashboard
             </h1>
             @*<h3 class="mb-0 fw-bold text-dark">Schools</h3>*@
-            <small class="text-muted">Manage schools for this site @if (Model?.GranteeName != null) { <text>· @Model.GranteeName</text> }</small>
+            <small class="text-muted">Manage schools for this site @if (Model?.GranteeName != null)
+            {<text>· @Model.GranteeName</text>}</small>
         </div>
 
         <div class="d-flex align-items-center gap-2">
@@ -64,8 +65,8 @@
                 + Add School
             </a>
             @*<a href="@Url.Action("Index", "School", new { id = siteId })" class="btn btn-outline-secondary" aria-label="Link an existing school">
-                Link School
-            </a>*@
+                    Link School
+                </a>*@
             <a href="@Url.Action("Index", "Grantee", new { id = granteeId })" class="btn btn-outline-secondary">
                 Back
             </a>

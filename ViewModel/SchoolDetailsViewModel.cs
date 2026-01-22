@@ -8,7 +8,9 @@ namespace MiniReportsProject.ViewModel
 {
     public class SchoolDetailsViewModel
     {
+        public int SchoolID { get; set; }
         public int SiteID { get; set; }
+        public int GradeID { get; set; }
         public string SchoolName { get; set; }
         public string Address { get; set; }
         public string SiteName { get; set; }

@@ -46,7 +46,7 @@ namespace MiniReportsProject.DAL
             }
             catch (Exception err)
             {
-                throw new Exception("Fetching Grantee Types Failed in catch block: " + err.Message);
+                throw new Exception("Linking School to Site Failed in catch block: " + err.Message);
             }
         }
 
@@ -61,6 +61,7 @@ namespace MiniReportsProject.DAL
                         new
                         {
                             GradeList = gradeList,
+                            SchoolID = 0,
                             SchoolName = school.SchoolName,
                             SiteID = LinkSiteToSchool ? school.SiteID : 0,
                             Address = school.Address
@@ -71,10 +72,36 @@ namespace MiniReportsProject.DAL
             }
             catch (Exception err)
             {
-                throw new Exception("Insert Failed in catch block: " + err.Message);
+                throw new Exception("Insert School Failed in catch block: " + err.Message);
             }
         }
-        
+
+        public void EditSchool(SchoolModel school, string gradeList, bool linkSiteToSchool)
+        {
+            try
+            {
+                using (var db = DapperContext.GetConnection())
+                {
+                    db.Execute(
+                        "sp_InsertSchoolAndGrade",
+                        new
+                        {
+                            GradeList = gradeList,
+                            SchoolID = school.SchoolID,
+                            SchoolName = school.SchoolName,
+                            SiteID = linkSiteToSchool ? school.SiteID : 0,
+                            Address = school.Address
+                        },
+                        commandType: CommandType.StoredProcedure
+                    );
+                }
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Edit School Failed: " + err.Message);
+            }
+        }
+
         public List<SchoolDetailsViewModel> GetDetailsByID(int schoolID)
         {
             try

@@ -18,7 +18,6 @@ namespace MiniReportsProject.Controllers
 
 
         // GET: School
-        // single Index action with optional site id to avoid ambiguous matches
         public ActionResult Index(int id)
         {
             List<SchoolModel> schools = _schoolDAL.GetAllSchoolNames();
@@ -73,7 +72,7 @@ namespace MiniReportsProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Add(SchoolGradeViewModel model, bool LinkSiteToSchool)
         {
-            // Safety checks (VERY IMPORTANT)
+            // Safety checks
             if (model == null)
             {
                 return HttpNotFound();
@@ -107,18 +106,114 @@ namespace MiniReportsProject.Controllers
             );
         }
 
+        // GET: Edit school
+        public ActionResult Edit(int id)
+        {
+            if (id == 0)
+            {
+                throw new Exception("Edit called with id = 0");
+            }
+
+            var schoolDetails = _schoolDAL.GetDetailsByID(id);
+
+            if (schoolDetails == null || !schoolDetails.Any())
+            {
+                TempData["Error"] = "School not found.";
+                return RedirectToAction("Index", "Grantee");
+            }
+
+            var first = schoolDetails.First();
+
+            // load existing grade IDs
+            var selectedGradeIds = schoolDetails
+                .Where(x => x.GradeID > 0)
+                .Select(x => x.GradeID)
+                .Distinct()
+                .ToList();
+
+            var model = new SchoolGradeViewModel
+            {
+                School = new SchoolModel
+                {
+                    SchoolID = first.SchoolID,
+                    SchoolName = first.SchoolName,
+                    Address = first.Address,
+                    SiteID = first.SiteID
+                },
+                SelectedGrades = selectedGradeIds
+            };
+
+            return View(model);
+        }
+
+
+        // POST: Edit school
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(SchoolGradeViewModel model, bool LinkSiteToSchool)
+        {
+            if (model == null || model.School == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (model.School.SchoolID <= 0)
+            {
+                ModelState.AddModelError("", "Invalid school ID.");
+                return View(model);
+            }
+
+            if (model.SelectedGrades == null || !model.SelectedGrades.Any())
+            {
+                ModelState.AddModelError("", "Please select at least one grade.");
+                return View(model);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            string gradeList = string.Join(",", model.SelectedGrades);
+
+            try
+            {
+                _schoolDAL.EditSchool(model.School, gradeList, LinkSiteToSchool);
+                TempData["Success"] = "School updated successfully.";
+
+                return RedirectToAction(
+                    "Index",
+                    "Site",
+                    new { id = model.School.SiteID }
+                );
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error updating school: " + ex.Message);
+                return View(model);
+            }
+        }
+
         public ActionResult Details(int id)
         {
             var schoolDetailsList = _schoolDAL.GetDetailsByID(id);
+
+            if (schoolDetailsList == null || !schoolDetailsList.Any())
+            {
+                TempData["Error"] = "School not found.";
+                return RedirectToAction("Index", "Grantee");
+            }
 
             List<string> gradeNames = new List<string>();
 
             foreach (var school in schoolDetailsList)
             {
-                gradeNames.Add(school.GradeName);
+                if (!string.IsNullOrEmpty(school.GradeName))
+                {
+                    gradeNames.Add(school.GradeName);
+                }
             }
 
-            // Assuming you want to show details for a single school, and aggregate grades
             var firstSchool = schoolDetailsList.FirstOrDefault();
             if (firstSchool != null)
             {
