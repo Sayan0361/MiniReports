@@ -224,6 +224,7 @@
     <Content Include="Views\Program\Index.cshtml" />
     <Content Include="Views\Shared\_LoginModal.cshtml" />
     <Content Include="Views\Program\Link.cshtml" />
+    <Content Include="Views\School\_SchoolDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

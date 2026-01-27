@@ -45,7 +45,8 @@
                     <!-- Action Button -->
                     <div class="col-md-4 text-end">
                         <a href="@Url.Action("Index", "Grantee", new { ID = g.GranteeID })"
-                           class="btn btn-success px-4">
+                           class="btn btn-success px-4"
+                           onclick="storeGranteeID(@g.GranteeID, '@g.GranteeName'); return true;">
                             →
                         </a>
                     </div>
@@ -57,3 +58,13 @@
     </div>
 </div>
 
+@section scripts {
+    <script>
+        const storeGranteeID = (granteeID, granteeName) => {
+            localStorage.setItem("GranteeID", granteeID);
+            localStorage.setItem("GranteeName", granteeName);
+            console.log("Stored GranteeID:", granteeID);
+            console.log("Stored GranteeName:", granteeName);
+        };
+    </script>
+}

@@ -16,7 +16,7 @@ namespace MiniReportsProject.Controllers
         {
             var SitesLinkedToCurrentProgram = _programDAL.GetAllSitesDetailsByProgramID(id, GranteeID);
             var SchoolsLinkedToCurrentProgram = _programDAL.GetAllSchoolDetailsByProgramID(id, GranteeID);
-
+            
             var model = new ProgramDetailsViewModel
             {
                 Sites = SitesLinkedToCurrentProgram,

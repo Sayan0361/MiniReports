@@ -17,16 +17,18 @@ namespace MiniReportsProject.Controllers
         {
             var schoolList = _siteDAL.GetAllSchoolsBySiteID(id);
 
-            // resolve grantee id: prefer explicit parameter, otherwise fetch site to get GrantID
-            int resolvedGranteeId = granteeId ?? 0;
-            if (!granteeId.HasValue)
-            {
-                var site = _siteDAL.GetSiteByID(id);
-                if (site != null)
-                {
-                    resolvedGranteeId = site.GrantID;
-                }
-            }
+            //// resolve grantee id: prefer explicit parameter, otherwise fetch site to get GrantID
+            //int resolvedGranteeId = granteeId ?? 0;
+            //if (!granteeId.HasValue)
+            //{
+            //    var site = _siteDAL.GetSiteByID(id);
+            //    if (site != null)
+            //    {
+            //        resolvedGranteeId = site.GrantID;
+            //    }
+            //}
+            var site = _siteDAL.GetSiteByID(id);
+            var resolvedGranteeId = site.GrantID;
 
             string granteeName = null;
             if (resolvedGranteeId > 0)
@@ -40,6 +42,14 @@ namespace MiniReportsProject.Controllers
                 GranteeID = resolvedGranteeId,
                 GranteeName = granteeName,
                 Schools = schoolList
+            };
+
+            vm.Modal = new ModalViewModel
+            {
+                Title = "Login",
+                Message = "Login Success.",
+                Status = true, // set to true to sho
+                UserName = site.SiteName
             };
 
             return View(vm);

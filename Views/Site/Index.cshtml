@@ -49,15 +49,17 @@
 
 <div class="container-fluid mt-4">
 
-    <!-- Header / Breadcrumb -->
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="mb-0 fw-bold text-dark">
                 Site Dashboard
             </h1>
             @*<h3 class="mb-0 fw-bold text-dark">Schools</h3>*@
-            <small class="text-muted">Manage schools for this site @if (Model?.GranteeName != null)
-            {<text>· @Model.GranteeName</text>}</small>
+            <small class="text-muted">
+                Manage schools for this site @if (Model?.GranteeName != null)
+                {<text>· @Model.GranteeName</text>}
+            </small>
         </div>
 
         <div class="d-flex align-items-center gap-2">
@@ -131,3 +133,17 @@
         </div>
     </div>
 </div>
+
+@Html.Partial("_LoginModal", Model.Modal)
+@if (Model?.Modal != null && Model.Modal.Status == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modalEl = document.getElementById('loginModal');
+            if (modalEl) {
+                var modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+        });
+    </script>
+}

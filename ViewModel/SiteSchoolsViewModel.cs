@@ -9,5 +9,6 @@ namespace MiniReportsProject.ViewModel
         public int GranteeID { get; set; }
         public string GranteeName { get; set; }
         public IEnumerable<SchoolModel> Schools { get; set; }
+        public ModalViewModel Modal { get; set; }
     }
 }
