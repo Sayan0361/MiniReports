@@ -18,7 +18,7 @@ namespace MiniReportsProject.Controllers
             var SiteList = _granteeDAL.GetAllSitesByGranteeID(ID);
             string GranteeName = _granteeDAL.GetGranteeNameByID(ID);
 
-            var ProgramData = _programDAL.GetProgramData();
+            var ProgramData = _programDAL.GetProgramData(ID);
 
             int GranteeID = ID;
 
@@ -28,12 +28,17 @@ namespace MiniReportsProject.Controllers
             siteViewModel.GranteeID = GranteeID;
 
             siteViewModel.ProgramList = ProgramData;
-            // pass the string as the model (not as a view name)
-            //return View((object)GranteeName);
+
+            // Build dynamic modal model instead of using ViewBag
+            siteViewModel.Modal = new ModalViewModel
+            {
+                Title = "Login",
+                Message = "Login Success.",
+                Status = true, // set to true to show the modal
+                UserName = GranteeName
+            };
+
             return View(siteViewModel);
         }
-
-
-
     }
 }

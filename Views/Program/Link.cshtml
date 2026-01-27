@@ -1,0 +1,139 @@
+﻿@model MiniReportsProject.ViewModel.linkProgramSitesViewModel
+
+<style>
+    .grantee-page { background-color: #f8f9fa; min-height: 100vh; padding-bottom: 4rem; }
+    .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+    .page-header { background: #fff; border-bottom: 1px solid #dee2e6; padding: 2rem 0; margin-bottom: 2rem; }
+    .page-header-content { display:flex; justify-content:space-between; align-items:center; }
+    .page-title { font-size:1.75rem; font-weight:600; margin:0; color:#212529; }
+    .content-title { font-size:1.25rem; font-weight:600; margin:0; color:#212529; }
+    .card { background:#fff; border:1px solid #dee2e6; border-radius:.375rem; padding:1rem; }
+    .list-grid { display:grid; grid-template-columns: 1fr 1fr; gap:1rem; }
+    .site-item { display:flex; align-items:center; justify-content:space-between; padding:.75rem; border:1px solid #eef0f2; border-radius:.375rem; background:#fff; }
+    .site-item:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .site-meta { display:flex; flex-direction:column; }
+    .site-name { font-weight:600; }
+    .site-address { color:#6c757d; font-size:.9rem; }
+    .actions { display:flex; gap:.5rem; align-items:center; }
+    .muted-note { color:#6c757d; font-size:.95rem; }
+    media (max-width:768px) { .list-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="grantee-page">
+    <div class="page-header">
+        <div class="dashboard-container page-header-content">
+            <div>
+                <h1 class="page-title">Link Site to Program</h1>
+                <p class="page-subtitle">Select a program and one site to link</p>
+            </div>
+            <a href="@Url.Action("Index","Grantee", new {id = Model.GranteeID})" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="card">
+            @using (Html.BeginForm("LinkProgramToSite", "Program", FormMethod.Post, new { id = "linkForm" }))
+            {   
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label class="form-label content-title" for="ProgramTypeID">Program</label>
+                    @if (Model?.ProgramTypes != null && Model.ProgramTypes.Any())
+                    {
+                        @* NAME changed to ProgramTypeID to match controller parameter *@
+                        <select id="ProgramTypeID" name="ProgramTypeID" class="form-select" aria-label="Select program">
+                            <option value="">-- Select Program --</option>
+                            @foreach (var p in Model.ProgramTypes)
+                            {
+                                <option value="@p.ProgramID">@p.ProgramType</option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <div class="text-muted">No program types available</div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label content-title">Available Sites</label>
+
+                    @if (Model?.UnlinkedSites != null && Model.UnlinkedSites.Any())
+                    {
+                        <div class="list-grid" role="list">
+                            @foreach (var s in Model.UnlinkedSites)
+                            {
+                                var radioId = "site_" + s.SiteID;
+                                <div class="site-item" role="listitem">
+                                    <div class="site-meta">
+                                        <div class="site-name">@s.SiteName</div>
+                                        @if (!string.IsNullOrWhiteSpace(s.Address))
+                                        {
+                                            <div class="site-address">@s.Address</div>
+                                        }
+                                    </div>
+                                    <div class="actions">
+                                        <input type="radio"
+                                               id="@radioId"
+                                               name="SiteID"
+                                               value="@s.SiteID"
+                                               class="form-check-input site-radio"
+                                               aria-label="Select site @s.SiteName" />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="mt-2 muted-note">You may select only one site to link.</div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">No unlinked sites available.</div>
+                    }
+                </div>
+
+                <div class="mt-3 d-flex align-items-center">
+                    <button id="linkButton" type="submit" class="btn btn-primary" disabled>Link Site</button>
+                    @*<a href="@Url.Action("Index","Program")" class="btn btn-outline-secondary ms-2">Cancel</a>*@
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        (function () {
+            var programSelect = document.getElementById('ProgramTypeID'); // updated id
+            var linkButton = document.getElementById('linkButton');
+            var siteRadios = document.querySelectorAll('.site-radio');
+
+            function isProgramSelected() {
+                return programSelect && programSelect.value !== '';
+            }
+
+            function isSiteSelected() {
+                for (var i = 0; i < siteRadios.length; i++) {
+                    if (siteRadios[i].checked) return true;
+                }
+                return false;
+            }
+
+            function updateButtonState() {
+                if (linkButton) {
+                    linkButton.disabled = !(isProgramSelected() && isSiteSelected());
+                }
+            }
+
+            if (programSelect) {
+                programSelect.addEventListener('change', updateButtonState);
+            }
+
+            siteRadios.forEach && siteRadios.forEach(function (r) {
+                r.addEventListener('change', updateButtonState);
+            });
+
+            // init state
+            updateButtonState();
+        })();
+    </script>
+}

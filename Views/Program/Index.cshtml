@@ -1,38 +1,209 @@
-﻿@model List<string>
-@{
-    ViewBag.Title = "Sites";
-}
+﻿@model MiniReportsProject.ViewModel.ProgramDetailsViewModel
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<style>
+    .grantee-page {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        padding-bottom: 4rem;
+    }
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Sites</h5>
-                </div>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
 
-                <ul class="list-group list-group-flush">
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var site in Model)
-                        {
-                            <li class="list-group-item d-flex align-items-center">
-                                <i class="bi bi-geo-alt me-2 text-primary"></i>
-                                @site
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li class="list-group-item text-muted text-center">
-                            No sites available
-                        </li>
-                    }
-                </ul>
+    .section-spacing {
+        margin-top: 3rem;
+    }
 
+    .page-header {
+        background: #fff;
+        border-bottom: 1px solid #dee2e6;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .page-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0;
+        color: #212529;
+    }
+
+    .page-subtitle {
+        font-size: 0.95rem;
+        color: #6c757d;
+        margin-top: .25rem;
+    }
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .content-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin: 0;
+        color: #212529;
+    }
+
+    .btn-primary-custom,
+    .logout-btn {
+        border-radius: .375rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        color: #fff;
+        padding: .5rem 1rem;
+    }
+
+    .btn-primary-custom {
+        background: #0d6efd;
+    }
+
+    .logout-btn {
+        background: #6c757d;
+    }
+
+    .sites-list,
+    .schools-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .site-card,
+    .school-card {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: .375rem;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .site-card-content,
+    .school-card-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .site-name,
+    .school-name {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .empty-state {
+        background: #fff;
+        border: 1px dashed #dee2e6;
+        border-radius: .375rem;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+
+    .empty-state-title {
+        font-weight: 600;
+        margin-bottom: .5rem;
+    }
+
+    .empty-state-text {
+        color: #6c757d;
+    }
+
+    media (max-width: 768px) {
+        .page-header-content,
+        .content-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
+</style>
+
+<div class="grantee-page">
+
+    <div class="page-header">
+        <div class="dashboard-container page-header-content">
+            <div>
+                <h1 class="page-title">Program Details</h1>
+                <p class="page-subtitle">Sites and schools overview</p>
+            </div>
+            <a href="@Url.Action("Index", "State")" class="logout-btn">Back</a>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+
+        <!-- Sites -->
+        @*<div class="content-header">
+            <h2 class="content-title">Sites</h2>
+            <a href="@Url.Action("Create", "Site", new { id = Model.ProgramID })"
+               class="btn-primary-custom">
+                Add Site
+            </a>
+        </div>*@
+        <div class="content-header">
+            <h2 class="content-title">Sites</h2>
+        </div>
+        @if (Model?.Sites != null && Model.Sites.Any())
+        {
+            <div class="sites-list">
+                @foreach (var site in Model.Sites)
+                {
+                    <div class="site-card">
+                        <div class="site-card-content">
+                            <div class="site-name">@site</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <h3 class="empty-state-title">No sites available</h3>
+                <p class="empty-state-text">There are no sites for this program.</p>
+            </div>
+        }
+
+        <!-- Schools -->
+        <div class="section-spacing">
+            <div class="content-header">
+                <h2 class="content-title">Schools</h2>
             </div>
 
+            @if (Model?.Schools != null && Model.Schools.Any())
+            {
+                <div class="schools-list">
+                    @foreach (var school in Model.Schools)
+                    {
+                        <div class="school-card">
+                            <div class="school-card-content">
+                                <div class="school-name">@school</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <h3 class="empty-state-title">No schools available</h3>
+                    <p class="empty-state-text">There are no schools linked to this program.</p>
+                </div>
+            }
         </div>
+
     </div>
 </div>

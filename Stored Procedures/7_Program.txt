@@ -1,4 +1,5 @@
-﻿CREATE OR ALTER PROC sp_GetAllSitesByProgramID
+﻿ALTER   PROC [dbo].[sp_GetAllSitesByProgramID]
+	@GranteeID int
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -13,12 +14,11 @@ BEGIN
         ON s.ProgramTypeID = p.ProgramID
     LEFT JOIN dbo.School sc
         ON sc.SiteID = s.SiteID
-    --WHERE p.ProgramID = @ProgramID
+    WHERE s.GranteeID = @GranteeID
     GROUP BY p.ProgramID, p.ProgramType;
 END;
 
-
-exec sp_GetAllSitesByProgramID @ProgramID = 1;
+exec sp_GetAllSitesByProgramID @GranteeID = 5;
 
 
 
@@ -36,13 +36,51 @@ exec sp_LinkProgramToSite
 	@SiteID = 19,
 	@ProgramTypeID = 1;
 
-CREATE OR ALTER PROC sp_GetAllSitesDetailsByProgramID
-	@ProgramID int
+CREATE OR ALTER   PROC [dbo].[sp_GetAllSitesDetailsByProgramID]
+	@ProgramID int, @GranteeID int
 AS
 BEGIN
     select site.SiteName from dbo.Site site
     join dbo.Program pg
-	on site.ProgramTypeID = pg.ProgramID and pg.ProgramID = @ProgramID
+	on site.ProgramTypeID = pg.ProgramID
+	and pg.ProgramID = @ProgramID
+	and site.GranteeID = @GranteeID
 END;
 
-exec sp_GetAllSitesDetailsByProgramID @ProgramID = 1;
+exec sp_GetAllSitesDetailsByProgramID @ProgramID = 1, @GranteeID = 1;
+
+
+
+
+create or alter proc sp_GetAllSchoolDetailsByProgramID
+	@ProgramID int,
+	@GranteeID int
+as
+begin
+	select school.SchoolName from dbo.School school
+	join dbo.Site site
+	on school.SiteID = site.SiteID
+	where site.ProgramTypeID = @ProgramID
+	and site.GranteeID = @GranteeID
+end;
+
+exec sp_GetAllSchoolDetailsByProgramID @ProgramID = 1, @GranteeID = 1;
+
+create or alter proc sp_GetAllProgramTypes
+as
+begin
+	select * from dbo.Program
+end
+
+exec sp_GetAllProgramTypes;
+
+create or alter proc sp_GetAllUnlinkedSitesWithProgram
+	@GranteeID int
+as
+begin
+	select site.SiteID, site.SiteName from dbo.Site site
+	where site.ProgramTypeID is null
+	and site.GranteeID = @GranteeID;
+end
+
+exec sp_GetAllUnlinkedSitesWithProgram @GranteeID = 5;

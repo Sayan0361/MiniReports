@@ -1,194 +1,173 @@
 ﻿@model MiniReportsProject.ViewModel.SiteViewModel
 
 <style>
-    
     .grantee-page {
-        background-color: #f8f9fa;
-        min-height: 100vh;
-        padding-bottom: 4rem;
-    }
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-bottom: 4rem;
+}
 
-    .dashboard-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1rem;
-    }
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
 
-    .section-spacing {
-        margin-top: 3rem;
-    }
+.section-spacing {
+    margin-top: 3rem;
+}
 
-    
-    .page-header {
-        background: #fff;
-        border-bottom: 1px solid #dee2e6;
-        padding: 2rem 0;
-        margin-bottom: 2rem;
-    }
+.page-header {
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
 
-    .page-header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+.page-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    .page-title {
-        font-size: 1.75rem;
-        font-weight: 600;
-        margin: 0;
-        color: #212529;
-    }
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+    color: #212529;
+}
 
-    .page-subtitle {
-        font-size: 0.95rem;
-        color: #6c757d;
-        margin-top: .25rem;
-    }
+.page-subtitle {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin-top: .25rem;
+}
 
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.content-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #212529;
+}
+
+.btn-group-custom {
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
+
+/* Buttons — NO HOVERS, NO TRANSITIONS */
+.btn-primary-custom,
+.btn-secondary-custom,
+.btn-success-custom,
+.logout-btn {
+    border-radius: .375rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    color: #fff;
+}
+
+.btn-primary-custom {
+    background: #0d6efd;
+    padding: .5rem 1rem;
+}
+
+.btn-secondary-custom {
+    background: #6c757d;
+    padding: .5rem 1rem;
+}
+
+.btn-success-custom {
+    background: #198754;
+    padding: .4rem .8rem;
+    font-size: .9rem;
+}
+
+.logout-btn {
+    background: #dc3545;
+    padding: .5rem 1rem;
+}
+
+.sites-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Cards — flat, no hover shadow */
+.site-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    padding: 1.5rem;
+}
+
+.site-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.site-info {
+    flex: 1;
+    min-width: 250px;
+}
+
+.site-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: .25rem;
+}
+
+.site-details {
+    font-size: .85rem;
+    color: #6c757d;
+}
+
+.empty-state {
+    background: #fff;
+    border: 1px dashed #dee2e6;
+    border-radius: .375rem;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.empty-state-title {
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+
+.empty-state-text {
+    color: #6c757d;
+}
+
+media (max-width: 768px) {
+    .page-header-content,
     .content-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
 
-    .content-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin: 0;
-        color: #212529;
-    }
-
-    .btn-group-custom {
-        display: flex;
-        gap: .75rem;
-        flex-wrap: wrap;
-    }
-
+    .btn-group-custom,
     .btn-primary-custom,
     .btn-secondary-custom,
-    .btn-success-custom,
-    .logout-btn {
-        border-radius: .375rem;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-block;
-        transition: all .15s ease-in-out;
-        color: #fff;
-    }
-
-    .btn-primary-custom {
-        background: #0d6efd;
-        padding: .5rem 1rem;
-    }
-
-        .btn-primary-custom:hover {
-            background: #0b5ed7;
-        }
-
-    .btn-secondary-custom {
-        background: #6c757d;
-        padding: .5rem 1rem;
-    }
-
-        .btn-secondary-custom:hover {
-            background: #5c636a;
-        }
-
     .btn-success-custom {
-        background: #198754;
-        padding: .4rem .8rem;
-        font-size: .9rem;
-    }
-
-        .btn-success-custom:hover {
-            background: #157347;
-        }
-
-    .logout-btn {
-        background: #dc3545;
-        padding: .5rem 1rem;
-    }
-
-        .logout-btn:hover {
-            background: #c82333;
-        }
-
-    .sites-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .site-card {
-        background: #fff;
-        border: 1px solid #dee2e6;
-        border-radius: .375rem;
-        padding: 1.5rem;
-        transition: box-shadow .15s ease-in-out;
-    }
-
-        .site-card:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
-
-    .site-card-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .site-info {
-        flex: 1;
-        min-width: 250px;
-    }
-
-    .site-name {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: .25rem;
-    }
-
-    .site-details {
-        font-size: .85rem;
-        color: #6c757d;
-    }
-
-    .empty-state {
-        background: #fff;
-        border: 1px dashed #dee2e6;
-        border-radius: .375rem;
-        padding: 3rem 2rem;
+        width: 100%;
         text-align: center;
     }
+}
 
-    .empty-state-title {
-        font-weight: 600;
-        margin-bottom: .5rem;
-    }
-
-    .empty-state-text {
-        color: #6c757d;
-    }
-
-   @@media (max-width: 768px) {
-        .page-header-content,
-        .content-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-
-        .btn-group-custom,
-        .btn-primary-custom,
-        .btn-secondary-custom,
-        .btn-success-custom {
-            width: 100%;
-            text-align: center;
-        }
-    }
 </style>
 
 <div class="grantee-page">
@@ -216,6 +195,9 @@
                    class="btn-primary-custom">Add Site</a>
                 <a href="@Url.Action("Index","School",new { id = Model.GranteeID })"
                    class="btn-secondary-custom">Link School</a>
+                @* New button to go to Program/Link/{GranteeID} for linking unlinked sites to programs *@
+                <a href="@Url.Action("Link", "Program", new { id = Model.GranteeID })"
+                   class="btn-success-custom">Link Sites to Program</a>
             </div>
         </div>
 
@@ -230,53 +212,53 @@
         }
         else
         {
-    <div class="sites-list">
-        @foreach (var site in Model.siteList)
-        {
-            <div class="site-card">
-                <div class="site-card-content">
+            <div class="sites-list">
+                @foreach (var site in Model.siteList)
+                {
+                    <div class="site-card">
+                        <div class="site-card-content">
 
-                    <div class="site-info">
-                        <h3 class="site-name">@site.SiteName</h3>
-                        @if (!string.IsNullOrEmpty(site.Address))
-                        {
-                            <p class="site-details">@site.Address</p>
-                        }
+                            <div class="site-info">
+                                <h3 class="site-name">@site.SiteName</h3>
+                                @if (!string.IsNullOrEmpty(site.Address))
+                                {
+                                    <p class="site-details">@site.Address</p>
+                                }
+                            </div>
+
+                            <div class="site-actions">
+                                <a href="@Url.Action("Edit","Site",new { id = site.SiteID })"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+                            </div>
+
+                            <div class="site-actions">
+                                <a href="@Url.Action("Index","Site",new { id = site.SiteID })"
+                                   class="btn btn-sm btn-success">
+                                    Logon
+                                </a>
+                            </div>
+
+                            <div class="site-actions">
+                                <form method="post"
+                                      action="@Url.Action("DeleteConfirm","Site",new { id = site.SiteID })"
+                                      onsubmit="return confirm('Are you sure you want to delete this site?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@site.SiteID" />
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div class="site-actions">
-                        <a href="@Url.Action("Edit","Site",new { id = site.SiteID })"
-                           class="btn-secondary-custom">
-                            Edit
-                        </a>
-                    </div>
-
-                    <div class="site-actions">
-                        <a href="@Url.Action("Index","Site",new { id = site.SiteID })"
-                           class="btn-success-custom">
-                            Logon
-                        </a>
-                    </div>
-
-                    <div class="site-actions">
-                        <form method="post"
-                              action="@Url.Action("DeleteConfirm","Site",new { id = site.SiteID })"
-                              onsubmit="return confirm('Are you sure you want to delete this site?');">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="id" value="@site.SiteID" />
-
-                            <button type="submit"
-                                    class="btn btn-sm btn-outline-danger">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-
-                </div>
+                }
             </div>
-
-        }
-    </div>
         }
 
         <!-- Programs -->
@@ -301,7 +283,7 @@
                                 @Html.ActionLink(program.ProgramType,
                                                  "Index",
                                                  "Program",
-                                                 new { id = program.ProgramID },
+                                                 new { id = program.ProgramID, GranteeID = Model.GranteeID },
                                                  null)
                             </h3>
                             <table class="table table-sm mt-3 mb-0">
@@ -326,3 +308,19 @@
 
     </div>
 </div>
+@Html.Partial("_LoginModal", Model.Modal)
+
+@section scripts {
+    @if (Model?.Modal != null && Model.Modal.Status == true)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var modalEl = document.getElementById('loginModal');
+                if (modalEl) {
+                    var modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+            });
+        </script>
+    }
+}

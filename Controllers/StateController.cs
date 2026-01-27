@@ -16,6 +16,7 @@ namespace MiniReportsProject.Controllers
         public ActionResult Index()
         {
             List<GranteeModel> grantees = _granteeDAL.GetAllGrantees();
+            
             return View(grantees);
         }
 
@@ -26,6 +27,7 @@ namespace MiniReportsProject.Controllers
             {
                 EntityTypes = _granteeDAL.GetAllGranteeTypes("Grantee")
             };
+           
             return View(createViewModel);
         }
 

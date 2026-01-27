@@ -12,5 +12,8 @@ namespace MiniReportsProject.ViewModel
         public string GranteeName { get; set; }
         public int GranteeID { get; set; }
         public List<ProgramModel> ProgramList { get; set; }
+
+        // Dynamic modal binding
+        public ModalViewModel Modal { get; set; }
     }
 }
