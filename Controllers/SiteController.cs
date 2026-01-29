@@ -17,16 +17,6 @@ namespace MiniReportsProject.Controllers
         {
             var schoolList = _siteDAL.GetAllSchoolsBySiteID(id);
 
-            //// resolve grantee id: prefer explicit parameter, otherwise fetch site to get GrantID
-            //int resolvedGranteeId = granteeId ?? 0;
-            //if (!granteeId.HasValue)
-            //{
-            //    var site = _siteDAL.GetSiteByID(id);
-            //    if (site != null)
-            //    {
-            //        resolvedGranteeId = site.GrantID;
-            //    }
-            //}
             var site = _siteDAL.GetSiteByID(id);
             var resolvedGranteeId = site.GrantID;
 
@@ -102,9 +92,9 @@ namespace MiniReportsProject.Controllers
         }
 
         // GET: Edit site
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int SiteID)
         {
-            var site = _siteDAL.GetSiteByID(id);
+            var site = _siteDAL.GetSiteByID(SiteID);
             if (site == null)
             {
                 return HttpNotFound();
@@ -125,45 +115,45 @@ namespace MiniReportsProject.Controllers
         }
 
         // POST: Edit site
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(SiteCreateViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                model.EntityTypes = _granteeDAL.GetAllGranteeTypes("Site");
-                return View(model);
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(SiteCreateViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        model.EntityTypes = _granteeDAL.GetAllGranteeTypes("Site");
+        //        return View(model);
+        //    }
 
-            if (model.SiteID <= 0)
-            {
-                ModelState.AddModelError("", "Invalid site ID.");
-                model.EntityTypes = _granteeDAL.GetAllGranteeTypes("Site");
-                return View(model);
-            }
+        //    if (model.SiteID <= 0)
+        //    {
+        //        ModelState.AddModelError("", "Invalid site ID.");
+        //        model.EntityTypes = _granteeDAL.GetAllGranteeTypes("Site");
+        //        return View(model);
+        //    }
 
-            int siteTypeId = _granteeDAL.GetTypeIDByTypeName("Site", model.SelectedTypeName);
-            if (siteTypeId == 0)
-            {
-                ModelState.AddModelError(nameof(model.SelectedTypeName), "Invalid site type.");
-                model.EntityTypes = _granteeDAL.GetAllGranteeTypes("Site");
-                return View(model);
-            }
+        //    int siteTypeId = _granteeDAL.GetTypeIDByTypeName("Site", model.SelectedTypeName);
+        //    if (siteTypeId == 0)
+        //    {
+        //        ModelState.AddModelError(nameof(model.SelectedTypeName), "Invalid site type.");
+        //        model.EntityTypes = _granteeDAL.GetAllGranteeTypes("Site");
+        //        return View(model);
+        //    }
 
-            var site = new SiteModel
-            {
-                SiteID = model.SiteID,
-                SiteName = model.SiteName,
-                SiteTypeID = siteTypeId,
-                Address = model.Address,
-                GrantID = model.GrantID
-            };
+        //    var site = new SiteModel
+        //    {
+        //        SiteID = model.SiteID,
+        //        SiteName = model.SiteName,
+        //        SiteTypeID = siteTypeId,
+        //        Address = model.Address,
+        //        GrantID = model.GrantID
+        //    };
 
-            _siteDAL.AddOrEditSite(site);
+        //    _siteDAL.AddOrEditSite(site);
 
-            TempData["Success"] = "Site updated successfully.";
-            return RedirectToAction("Index", "Grantee", new { id = model.GrantID });
-        }
+        //    TempData["Success"] = "Site updated successfully.";
+        //    return RedirectToAction("Index", "Grantee", new { id = model.GrantID });
+        //}
 
         public ActionResult Delete(int id)
         {
@@ -187,6 +177,60 @@ namespace MiniReportsProject.Controllers
             _siteDAL.DeleteSite(id);
             TempData["Success"] = "Site deleted successfully.";
             return RedirectToAction("Index", "Grantee", new { id = site.GrantID });
+        }
+
+        public JsonResult GetSiteByID(int id)
+        {
+            var site = _siteDAL.GetSiteByID(id);
+            var siteTypes = _granteeDAL.GetAllGranteeTypes("Site");
+            var selectedType = siteTypes.FirstOrDefault(t => t.EntityTypeID == site.SiteTypeID);
+            if (site == null)
+            {
+                return Json(new { success = false, message = "Site not found." }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new
+            {
+                success = true,
+                data = new
+                {
+                    site.SiteID,
+                    site.SiteName,
+                    site.SiteTypeID,
+                    site.Address,
+                    site.GrantID,
+                    siteTypes,
+                    selectedType,
+                }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        // POST: Edit site
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult Edit(SiteCreateViewModel model)
+        {
+            if(model.SiteID <= 0)
+            {
+                return Json(new { success = false, message = "Invalid ID" });
+            }
+
+            int siteTypeId = _granteeDAL.GetTypeIDByTypeName("Site", model.SelectedTypeName);
+
+            if (siteTypeId == 0)
+                return Json(new { success = false, message = "Invalid type" });
+
+            var site = new SiteModel
+            {
+                SiteID = model.SiteID,
+                SiteName = model.SiteName,
+                SiteTypeID = siteTypeId,
+                Address = model.Address,
+                GrantID = model.GrantID
+            };
+
+            _siteDAL.AddOrEditSite(site);
+
+            return Json(new { success = true });
         }
     }
 }
