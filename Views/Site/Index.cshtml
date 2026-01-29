@@ -115,7 +115,7 @@
                             <a href="@Url.Action("Details", "School", new { id = school.SchoolID })" class="btn btn-sm btn-success">
                                 Open
                             </a>
-                            <a href="@Url.Action("Edit", "School", new { id = school.SchoolID })" class="btn btn-sm btn-outline-primary">
+                            <a href="#" onclick="handleEdit(@school.SchoolID); return false;" class="btn btn-sm btn-outline-primary">
                                 Edit
                             </a>
                             <form method="post" action="@Url.Action("DeleteConfirm", "School")" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this school?');">
@@ -145,5 +145,15 @@
                 modal.show();
             }
         });
+    </script>
+} 
+
+@section Scripts {
+    <script>
+        const handleEdit = (schoolID) => {
+            localStorage.setItem("SchoolID", schoolID);
+            console.log("Stored SchoolID:", schoolID);
+            window.location.href = `/School/Edit/${schoolID}`;
+        };
     </script>
 }

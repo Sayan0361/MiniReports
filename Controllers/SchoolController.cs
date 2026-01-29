@@ -53,6 +53,103 @@ namespace MiniReportsProject.Controllers
             return RedirectToAction("Index", "Site", new { id = siteId });
         }
 
+        [HttpGet]
+        public JsonResult GetEditSchoolDetails(int SchoolID)
+        {
+            try
+            {
+                var result = _schoolDAL.GetDetailsByID(SchoolID);
+
+                if (result == null || !result.Any())
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "School not found"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                var first = result.First();
+
+                var response = new
+                {
+                    success = true,
+                    school = new
+                    {
+                        SchoolID = first.SchoolID,
+                        SiteID = first.SiteID,
+                        SchoolName = first.SchoolName,
+                        Address = first.Address
+                    },
+                    selectedGrades = result
+                        .Where(x => x.GradeID > 0)
+                        .Select(x => x.GradeID)
+                        .Distinct()
+                        .ToList()
+                };
+
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Error: " + ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // for AJAX (no anti-forgery needed)
+        [HttpPost]
+        public JsonResult SaveEditSchool(int SchoolID, int SiteID, string SchoolName,
+            string Address, int[] SelectedGrades, bool LinkSiteToSchool)
+        {
+            try
+            {
+                // Validation
+                if (SchoolID <= 0)
+                {
+                    return Json(new { success = false, message = "Invalid school ID" });
+                }
+
+                if (string.IsNullOrWhiteSpace(SchoolName))
+                {
+                    return Json(new { success = false, message = "School name is required" });
+                }
+
+                if (SelectedGrades == null || SelectedGrades.Length == 0)
+                {
+                    return Json(new { success = false, message = "Please select at least one grade" });
+                }
+
+                // Create model
+                var school = new SchoolModel
+                {
+                    SchoolID = SchoolID,
+                    SchoolName = SchoolName,
+                    Address = Address,
+                    SiteID = LinkSiteToSchool ? SiteID : 0
+                };
+
+                string gradeList = string.Join(",", SelectedGrades);
+
+                // Update
+                _schoolDAL.EditSchool(school, gradeList, LinkSiteToSchool);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "School updated successfully",
+                    siteId = SiteID
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
         public ActionResult Add(int id)
         {
             var model = new SchoolGradeViewModel
@@ -124,7 +221,6 @@ namespace MiniReportsProject.Controllers
 
             var first = schoolDetails.First();
 
-            // load existing grade IDs
             var selectedGradeIds = schoolDetails
                 .Where(x => x.GradeID > 0)
                 .Select(x => x.GradeID)
@@ -145,7 +241,6 @@ namespace MiniReportsProject.Controllers
 
             return View(model);
         }
-
 
         // POST: Edit school
         [HttpPost]
