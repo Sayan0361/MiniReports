@@ -192,12 +192,18 @@
         <div class="content-header">
             <h2 class="content-title">Sites</h2>
             <div class="btn-group-custom">
-                <a href="@Url.Action("Create","Site",new { id = Model.GranteeID })"
-                   class="btn-primary-custom">Add Site</a>
-                <a href="@Url.Action("Index","School",new { id = Model.GranteeID })"
-                   class="btn-secondary-custom">Link School</a>
-                <a href="@Url.Action("Link", "Program", new { id = Model.GranteeID })"
-                   class="btn-success-custom">Link Sites to Program</a>
+                <a onclick="handleAddSite()"
+                   class="btn-primary-custom">
+                    Add Site
+                </a>
+                <a onclick="handleLinkSchool()"
+                   class="btn-secondary-custom">
+                    Link School
+                </a>
+                <a onclick="handleLinkProgram()"
+                   class="btn-success-custom">
+                    Link Sites to Program
+                </a>
             </div>
         </div>
 
@@ -278,16 +284,7 @@
                 <div class="sites-list">
                     @foreach (var program in Model.ProgramList)
                     {
-                        <div class="site-card">
-                            @*<h3 class="site-name">@program.ProgramType</h3>*@
-                            @*<h3 class="site-name">
-                                @Html.ActionLink(program.ProgramType,
-                                                 "Index",
-                                                 "Program",
-                                                 new { id = program.ProgramID, GranteeID = Model.GranteeID },
-                                                 null)
-                            </h3>*@
-                            
+                        <div class="site-card">                           
                             <h3 class="site-name" role="button" onclick="handleProgram(@program.ProgramID)">
                                  @program.ProgramType
                             </h3>
@@ -318,14 +315,12 @@
 
 @section scripts {
     <script>
-     
-        document.addEventListener("DOMContentLoaded", function () {
-            const storedGranteeID = localStorage.getItem("GranteeID");
-            const storedGranteeName = localStorage.getItem("GranteeName");
 
-            if (storedGranteeName) {
-                document.getElementById("granteeNameDisplay").textContent = storedGranteeName;
-            }
+        const GranteeID = localStorage.getItem("GranteeID");
+        const GranteeName = localStorage.getItem("GranteeName");
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("granteeNameDisplay").textContent = GranteeName != "" ? GranteeName : "Grantee";
         });
 
         const handleSiteLogon = (SiteID, SiteName) => {
@@ -337,13 +332,24 @@
         const handleGranteeLogout = () => {
             localStorage.removeItem("GranteeID");
             localStorage.removeItem("GranteeName");
-            const GranteeID = localStorage.getItem("GranteeID");
             window.location.href = `/`
         }
 
         const handleProgram = (ProgramID) => {
-            const GranteeID = localStorage.getItem("GranteeID");
             window.location.href =  `/Program/Index/${ProgramID}?GranteeID=${GranteeID}` ;
+        }
+
+        const handleAddSite = () => {
+            const GranteeID = localStorage.getItem("GranteeID");
+            window.location.href = `/Site/Create/${GranteeID}`;
+        }
+
+        const handleLinkSchool = () => {           
+            window.location.href = `/School/Index/${GranteeID}`;
+        }
+
+        const handleLinkProgram = () => {
+            window.location.href = `/Program/Link/${GranteeID}`;
         }
     </script>
 
