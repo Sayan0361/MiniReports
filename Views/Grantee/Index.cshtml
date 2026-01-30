@@ -178,7 +178,7 @@
             <div>
                 <h1 class="page-title">Grantee Dashboard</h1>
                 <p class="page-subtitle">
-                    Welcome, <strong id="granteeNameDisplay">@Model.GranteeName</strong>
+                    Welcome, <strong id="granteeNameDisplay"></strong>
                 </p>
             </div>
             <button class="btn btn-danger" onclick="handleGranteeLogout()"
@@ -351,6 +351,7 @@
     {
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+
                 var modalEl = document.getElementById('loginModal');
                 if (modalEl) {
                     var modal = new bootstrap.Modal(modalEl);

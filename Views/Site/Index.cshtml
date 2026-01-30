@@ -69,7 +69,7 @@
             @*<a href="@Url.Action("Index", "School", new { id = siteId })" class="btn btn-outline-secondary" aria-label="Link an existing school">
                     Link School
                 </a>*@
-            <a href="@Url.Action("Index", "Grantee", new { id = granteeId })" class="btn btn-outline-secondary">
+            <a href="@Url.Action("Index", "Grantee", new { id = granteeId })" class="btn btn-outline-secondary" id="SiteBackbtn">
                 Back
             </a>
         </div>
@@ -112,7 +112,8 @@
                         </div>
 
                         <div class="school-actions">
-                            <a href="@Url.Action("Details", "School", new { id = school.SchoolID })" class="btn btn-sm btn-success">
+                            <a href="@Url.Action("Details", "School", new { id = school.SchoolID })" class="btn btn-sm btn-success"
+                               id="OpenBtn">
                                 Open
                             </a>
                             <a href="#" onclick="handleEdit(@school.SchoolID); return false;" class="btn btn-sm btn-outline-primary">
@@ -155,5 +156,16 @@
             console.log("Stored SchoolID:", schoolID);
             window.location.href = `/School/Edit/${schoolID}`;
         };
+
+        $('#SiteBackbtn').on('click', function () {
+            localStorage.removeItem("SiteID");
+            localStorage.removeItem("SiteName");
+        })
+
+        $('#OpenBtn').on('click', function () {
+            localStorage.setItem("SchoolName", );
+            window.location.href = `/School/Details/${schoolID}`;
+        })
+
     </script>
 }
