@@ -16,40 +16,25 @@
             <!-- Title -->
             <div class="row mb-4">
                 <div class="col text-center">
-                    <h3 class="fw-semibold text-dark">Grantees</h3>
+                    <h3 class="fw-semibold text-dark">
+                        Grantees
+                    </h3>
                 </div>
             </div>
 
             <!-- Add Grantee Button -->
             <div class="row mb-4">
                 <div class="col">
-                    <a href="@Url.Action("Create", "State")"
+                    <a onclick="redirectToAddGrantee()"
                        class="btn btn-outline-primary">
                         + Add Grantee
                     </a>
                 </div>
             </div>
 
-            <!-- Grantee List -->
-            <div class="row align-items-center py-3 border-bottom" id="grantee-list">
-
-                <!-- Grantee Name -->
-                <!--<div class="col-md-8">
-                    <span class="fs-5 text-dark" id="grantee-name-span">-->
-                        @*→ @g.GranteeName*@
-                    <!--</span>
-                </div>-->
-
-                <!--Action Button-->
-                @*<div class="col-md-4 text-end">
-                    <a href="@Url.Action("Index", "Grantee", new { ID = g.GranteeID })"
-                       class="btn btn-success px-4"
-                       onclick="storeGranteeID(@g.GranteeID, '@g.GranteeName')"
-                       id="grantee-logon-Btn">
-                        →
-                    </a>
-                </div>*@
-
+            <!-- Grantee List Container -->
+            <div id="grantee-list">
+                <!-- Grantees will be populated here by JQuery -->
             </div>
         </div>
     </div>
@@ -57,6 +42,7 @@
 
 @section scripts {
     <script>
+        // Store GranteeID and GranteeName in localStorage
         const storeGranteeID = (granteeID, granteeName) => {
             localStorage.setItem("GranteeID", granteeID);
             localStorage.setItem("GranteeName", granteeName);
@@ -64,44 +50,62 @@
             console.log("Stored GranteeName:", granteeName);
         };
 
+        const redirectToAddGrantee = () => {
+            window.location.href = `State/Create`
+        }
+
         function PopulateGranteeList(GranteeList) {
+            if (!GranteeList || GranteeList.length === 0) {
+                $("#grantee-list").html('<p class="text-muted text-center">No grantees found.</p>');
+                return;
+            }
+
+            let html = '';
             $.each(GranteeList, function (ind, grantee) {
-                $("#grantee-list").append(
-                    `<div class="row align-items-center py-3 border-bottom">
+                html += `
+                    <div class="row align-items-center py-3 border-bottom">
                         <div class="col-md-8">
-                            <span class="fs-5 text-dark" id="grantee-name-span">
+                            <span class="fs-5 text-dark">
                                 → ${grantee.GranteeName}
                             </span>
                         </div>
                         <div class="col-md-4 text-end">
                             <a href="/Grantee/Index/${grantee.GranteeID}"
                                class="btn btn-success px-4"
-                               onclick="storeGranteeID(${grantee.GranteeID}, '${grantee.GranteeName}')"
-                               id="grantee-logon-Btn">
+                               onclick="storeGranteeID(${grantee.GranteeID}, '${grantee.GranteeName}'); return true;">
                                 →
                             </a>
                         </div>
-                    </div>`
-                )
-            })
+                    </div>
+                `;
+            });
+            
+            $("#grantee-list").html(html);
         }
 
+        // Fetch all grantees via AJAX
         function GetAllGrantees() {
             $.ajax({
                 url: '/State/GetAllGrantees',
                 type: 'GET',
+                dataType: 'json',
                 success: function (res) {
+                    console.log("Response:", res);
                     if (!res.success) {
                         alert(res.message || 'Failed to retrieve grantees.');
                         return;
                     }
-                    PopulateGranteeList(res.data)
+                    console.log("Grantees loaded:", res.data);
+                    PopulateGranteeList(res.data);
                 },
-                error: function (error) {
-                    alert('Error retrieving grantees:', error);
+                error: function (xhr, status, error) {
+                    alert('Error retrieving grantees. Check console for details.');
                 }
-            })
+            });
         }
 
+        $(document).ready(function () {
+            GetAllGrantees();
+        });
     </script>
 }
