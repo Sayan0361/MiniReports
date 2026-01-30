@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
+using System;
 
 namespace MiniReportsProject.Controllers
 {
@@ -15,9 +16,38 @@ namespace MiniReportsProject.Controllers
 
         public ActionResult Index()
         {
-            List<GranteeModel> grantees = _granteeDAL.GetAllGrantees();
-            
-            return View(grantees);
+            return View();
+        }
+
+        public JsonResult GetAllGrantees()
+        {
+            try
+            {
+                List<GranteeModel> grantees = _granteeDAL.GetAllGrantees();
+                
+                if(grantees == null || !grantees.Any())
+                {
+                    return Json(new 
+                    {
+                        success = false,
+                        message = "No grantees found."
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new 
+                {
+                    success = true,
+                    data = grantees
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "An error occurred while retrieving grantees."
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult Create()

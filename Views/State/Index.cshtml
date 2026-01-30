@@ -31,29 +31,26 @@
             </div>
 
             <!-- Grantee List -->
-            @foreach (var g in Model)
-            {
-                <div class="row align-items-center py-3 border-bottom">
+            <div class="row align-items-center py-3 border-bottom" id="grantee-list">
 
-                    <!-- Grantee Name -->
-                    <div class="col-md-8">
-                        <span class="fs-5 text-dark">
-                            → @g.GranteeName
-                        </span>
-                    </div>
+                <!-- Grantee Name -->
+                <!--<div class="col-md-8">
+                    <span class="fs-5 text-dark" id="grantee-name-span">-->
+                        @*→ @g.GranteeName*@
+                    <!--</span>
+                </div>-->
 
-                    <!-- Action Button -->
-                    <div class="col-md-4 text-end">
-                        <a href="@Url.Action("Index", "Grantee", new { ID = g.GranteeID })"
-                           class="btn btn-success px-4"
-                           onclick="storeGranteeID(@g.GranteeID, '@g.GranteeName')">
-                            →
-                        </a>
-                    </div>
+                <!--Action Button-->
+                @*<div class="col-md-4 text-end">
+                    <a href="@Url.Action("Index", "Grantee", new { ID = g.GranteeID })"
+                       class="btn btn-success px-4"
+                       onclick="storeGranteeID(@g.GranteeID, '@g.GranteeName')"
+                       id="grantee-logon-Btn">
+                        →
+                    </a>
+                </div>*@
 
-                </div>
-            }
-
+            </div>
         </div>
     </div>
 </div>
@@ -66,5 +63,45 @@
             console.log("Stored GranteeID:", granteeID);
             console.log("Stored GranteeName:", granteeName);
         };
+
+        function PopulateGranteeList(GranteeList) {
+            $.each(GranteeList, function (ind, grantee) {
+                $("#grantee-list").append(
+                    `<div class="row align-items-center py-3 border-bottom">
+                        <div class="col-md-8">
+                            <span class="fs-5 text-dark" id="grantee-name-span">
+                                → ${grantee.GranteeName}
+                            </span>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="/Grantee/Index/${grantee.GranteeID}"
+                               class="btn btn-success px-4"
+                               onclick="storeGranteeID(${grantee.GranteeID}, '${grantee.GranteeName}')"
+                               id="grantee-logon-Btn">
+                                →
+                            </a>
+                        </div>
+                    </div>`
+                )
+            })
+        }
+
+        function GetAllGrantees() {
+            $.ajax({
+                url: '/State/GetAllGrantees',
+                type: 'GET',
+                success: function (res) {
+                    if (!res.success) {
+                        alert(res.message || 'Failed to retrieve grantees.');
+                        return;
+                    }
+                    PopulateGranteeList(res.data)
+                },
+                error: function (error) {
+                    alert('Error retrieving grantees:', error);
+                }
+            })
+        }
+
     </script>
 }
