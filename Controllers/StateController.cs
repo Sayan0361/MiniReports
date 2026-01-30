@@ -84,7 +84,6 @@ namespace MiniReportsProject.Controllers
                     });
                 }
 
-                // Lookup EntityTypeID by Level and TypeName
                 int typeId = _granteeDAL.GetTypeIDByTypeName("Grantee", model.SelectedTypeName);
                 if (typeId == 0)
                 {
@@ -95,7 +94,6 @@ namespace MiniReportsProject.Controllers
                     });
                 }
 
-                // Create GranteeModel
                 var grantee = new GranteeModel
                 {
                     GranteeName = model.GranteeName.Trim(),
