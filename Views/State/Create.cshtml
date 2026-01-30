@@ -23,6 +23,11 @@
     .form-select {
         padding: 0.55rem 0.75rem;
     }
+
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
 </style>
 
 <div class="w-100 min-h-screen bg-light">
@@ -44,73 +49,160 @@
                 Provide the required details to create a new grantee.
             </p>
 
-            @using (Html.BeginForm())
-            {
-                @Html.AntiForgeryToken()
+            <!-- Error/Success Messages -->
+            <div id="alertContainer"></div>
 
-                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger mb-4" })
+            <!-- Form -->
+            <form id="granteeForm">
 
                 <!-- Name -->
                 <div class="mb-4">
-                    @Html.LabelFor(m => m.GranteeName, "Name", new { @class = "form-label" })
-                    @Html.TextBoxFor(
-                        m => m.GranteeName,
-                        new
-                        {
-                            @class = "form-control",
-                            placeholder = "Enter name"
-                        })
-                    @Html.ValidationMessageFor(m => m.GranteeName, "", new { @class = "text-danger" })
+                    <label for="GranteeName" class="form-label">Name</label>
+                    <input type="text" 
+                           id="GranteeName" 
+                           name="GranteeName" 
+                           class="form-control" 
+                           placeholder="Enter name"
+                           required>
+                    <div class="text-danger" id="error-GranteeName"></div>
                 </div>
 
                 <!-- Grantee Type -->
                 <div class="mb-4">
-                    @Html.LabelFor(m => m.SelectedTypeName, "Grantee Type", new { @class = "form-label" })
-                    @Html.DropDownListFor(
-                        m => m.SelectedTypeName,
-                        new SelectList(
-                            Model.EntityTypes ?? Enumerable.Empty<MiniReportsProject.Models.EntityTypeModel>(),
-                            "TypeName",
-                            "TypeName",
-                            Model.SelectedTypeName
-                        ),
-                        "Select type",
-                        new { @class = "form-select" }
-                    )
-                    @Html.ValidationMessageFor(m => m.SelectedTypeName, "", new { @class = "text-danger" })
+                    <label for="SelectedTypeName" class="form-label">Grantee Type</label>
+                    <select id="SelectedTypeName" 
+                            name="SelectedTypeName" 
+                            class="form-select"
+                            required>
+                        <option value="">Select type</option>
+                        @foreach (var type in Model.EntityTypes ?? Enumerable.Empty<MiniReportsProject.Models.EntityTypeModel>())
+                        {
+                            <option value="@type.TypeName">@type.TypeName</option>
+                        }
+                    </select>
+                    <div class="text-danger" id="error-SelectedTypeName"></div>
                 </div>
 
                 <!-- Address -->
                 <div class="mb-4">
-                    @Html.LabelFor(m => m.Address, new { @class = "form-label" })
-                    @Html.TextBoxFor(
-                        m => m.Address,
-                        new
-                        {
-                            @class = "form-control",
-                            placeholder = "Enter address"
-                        })
-                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                    <label for="Address" class="form-label">Address</label>
+                    <input type="text" 
+                           id="Address" 
+                           name="Address" 
+                           class="form-control" 
+                           placeholder="Enter address">
+                    <div class="text-danger" id="error-Address"></div>
                 </div>
 
                 <!-- Actions -->
                 <div class="d-flex justify-content-end gap-2 pt-3">
-                    <a href="@Url.Action("Index")"
-                       class="btn btn-outline-secondary px-4">
+                    <button type="button" 
+                            class="btn btn-outline-secondary px-4"
+                            onclick="goBack()">
                         Cancel
-                    </a>
+                    </button>
 
-                    <button type="submit"
-                            class="btn btn-primary px-4">
+                    <button type="submit" 
+                            class="btn btn-primary px-4"
+                            id="submitBtn">
                         Create
                     </button>
                 </div>
-            }
+
+            </form>
 
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Form submission via AJAX
+            $("#granteeForm").on("submit", function (e) {
+                e.preventDefault();
+
+                // Clear previous errors
+                $(".text-danger").text("");
+                $("#alertContainer").html("");
+
+                const formData = {
+                    GranteeName: $("#GranteeName").val().trim(),
+                    SelectedTypeName: $("#SelectedTypeName").val().trim(),
+                    Address: $("#Address").val().trim()
+                };
+
+                // Basic validation
+                if (!formData.GranteeName) {
+                    $("#error-GranteeName").text("Grantee name is required.");
+                    return;
+                }
+
+                if (!formData.SelectedTypeName) {
+                    $("#error-SelectedTypeName").text("Grantee type is required.");
+                    return;
+                }
+
+                // Disable submit button
+                $("#submitBtn").prop("disabled", true).text("Creating...");
+
+                // AJAX call
+                $.ajax({
+                    url: "/State/CreateGrantee",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        if (response.success) {
+                            // Show success message
+                            $("#alertContainer").html(
+                                `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Success!</strong> ${response.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>`
+                            );
+
+                            // Reset form
+                            $("#granteeForm")[0].reset();
+
+                            // Redirect after 1.5 seconds
+                            setTimeout(function () {
+                                window.location.href = "/State/Index";
+                            }, 1500);
+                        } else {
+                            // Show error message
+                            $("#alertContainer").html(
+                                `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Error!</strong> ${response.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>`
+                            );
+                            $("#submitBtn").prop("disabled", false).text("Create");
+                        }
+                    },
+                    error: function (xhr) {
+                        let errorMsg = "An unexpected error occurred.";
+                        
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+
+                        $("#alertContainer").html(
+                            `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Error!</strong> ${errorMsg}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>`
+                        );
+
+                        $("#submitBtn").prop("disabled", false).text("Create");
+                    }
+                });
+            });
+        });
+
+        // Navigate back to State/Index
+        const goBack = () => {
+            window.location.href = "/State/Index";
+        };
+    </script>
 }

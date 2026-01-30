@@ -40,19 +40,18 @@ namespace MiniReportsProject.Controllers
                     data = grantees
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 return Json(new
                 {
                     success = false,
-                    message = "An error occurred while retrieving grantees."
+                    message = "An error occurred while retrieving grantees: " + ex.Message
                 }, JsonRequestBehavior.AllowGet);
             }
         }
 
         public ActionResult Create()
         {
-            // populate types into a strongly-typed view model (Level = "Grantee")
             var createViewModel = new GranteeCreateViewModel
             {
                 EntityTypes = _granteeDAL.GetAllGranteeTypes("Grantee")
@@ -61,18 +60,78 @@ namespace MiniReportsProject.Controllers
             return View(createViewModel);
         }
 
+        // AJAX endpoint for creating grantee
+        [HttpPost]
+        public JsonResult CreateGrantee(GranteeCreateViewModel model)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(model.GranteeName))
+                {
+                    return Json(new 
+                    {
+                        success = false,
+                        message = "Grantee name is required."
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.SelectedTypeName))
+                {
+                    return Json(new 
+                    {
+                        success = false,
+                        message = "Grantee type is required."
+                    });
+                }
+
+                // Lookup EntityTypeID by Level and TypeName
+                int typeId = _granteeDAL.GetTypeIDByTypeName("Grantee", model.SelectedTypeName);
+                if (typeId == 0)
+                {
+                    return Json(new 
+                    {
+                        success = false,
+                        message = "Selected grantee type not found."
+                    });
+                }
+
+                // Create GranteeModel
+                var grantee = new GranteeModel
+                {
+                    GranteeName = model.GranteeName.Trim(),
+                    GranteeTypeID = typeId,
+                    Address = model.Address?.Trim()
+                };
+
+                _granteeDAL.AddGrantee(grantee);
+
+                return Json(new 
+                {
+                    success = true,
+                    message = "Grantee created successfully!"
+                });
+            }
+            catch(Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Error creating grantee: " + ex.Message
+                });
+            }
+        }
+
+        // Create POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(GranteeCreateViewModel createViewModel)
         {
             if (!ModelState.IsValid)
             {
-                // re-populate types for redisplay
                 createViewModel.EntityTypes = _granteeDAL.GetAllGranteeTypes("Grantee");
                 return View(createViewModel);
             }
 
-            // lookup EntityTypeID by Level and TypeName via stored procedure
             int typeId = _granteeDAL.GetTypeIDByTypeName("Grantee", createViewModel.SelectedTypeName);
             if (typeId == 0)
             {
@@ -81,7 +140,6 @@ namespace MiniReportsProject.Controllers
                 return View(createViewModel);
             }
 
-            // create GranteeModel and persist
             var grantee = new GranteeModel
             {
                 GranteeName = createViewModel.GranteeName,

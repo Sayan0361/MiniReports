@@ -7,7 +7,9 @@
 
         <!-- Header -->
         <div class="card-header bg-white border-bottom">
-            <h5 class="mb-0 fw-bold text-dark">State Home</h5>
+            <h5 class="mb-0 fw-bold text-dark">
+                State Home
+            </h5>
         </div>
 
         <!-- Body -->
@@ -46,8 +48,6 @@
         const storeGranteeID = (granteeID, granteeName) => {
             localStorage.setItem("GranteeID", granteeID);
             localStorage.setItem("GranteeName", granteeName);
-            console.log("Stored GranteeID:", granteeID);
-            console.log("Stored GranteeName:", granteeName);
         };
 
         const redirectToAddGrantee = () => {
